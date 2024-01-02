@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	swissqrinvoice "github.com/72nd/swiss-qr-invoice"
+	"github.com/toky03/qr-invoice/document"
 )
 
 func TestVariableData_ToCalculatedTableData(t *testing.T) {
@@ -181,6 +182,128 @@ func TestInvoiceDetails_ToInvoiceDetails(t *testing.T) {
 			}
 			if got := i.ToInvoiceDetails(tt.args.debtor, tt.args.calculatedData); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("InvoiceDetails.ToInvoiceDetails() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestDebtorData_ToReceiverAdress(t *testing.T) {
+	type fields struct {
+		Parzelle   string
+		Are        float32
+		IsVorstand bool
+		Language   string
+		LastName   string
+		Debtor     Debtor
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		want   document.ReceiverAdress
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			debtor := DebtorData{
+				Parzelle:   tt.fields.Parzelle,
+				Are:        tt.fields.Are,
+				IsVorstand: tt.fields.IsVorstand,
+				Language:   tt.fields.Language,
+				LastName:   tt.fields.LastName,
+				Debtor:     tt.fields.Debtor,
+			}
+			if got := debtor.ToReceiverAdress(); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("DebtorData.ToReceiverAdress() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestInvoiceDetails_ToTitle(t *testing.T) {
+	type fields struct {
+		Creditor           Creditor
+		Ueberschrift       TranslatedText
+		TabelleAnzahl      TranslatedText
+		TabelleEinheit     TranslatedText
+		TabelleBezeichnung TranslatedText
+		TabellePreis       TranslatedText
+		TabelleBetrag      TranslatedText
+		TabelleAaren       TranslatedText
+		TabelleJahre       TranslatedText
+	}
+	type args struct {
+		language string
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   document.TitleWithDate
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			invoiceDetails := InvoiceDetails{
+				Creditor:           tt.fields.Creditor,
+				Ueberschrift:       tt.fields.Ueberschrift,
+				TabelleAnzahl:      tt.fields.TabelleAnzahl,
+				TabelleEinheit:     tt.fields.TabelleEinheit,
+				TabelleBezeichnung: tt.fields.TabelleBezeichnung,
+				TabellePreis:       tt.fields.TabellePreis,
+				TabelleBetrag:      tt.fields.TabelleBetrag,
+				TabelleAaren:       tt.fields.TabelleAaren,
+				TabelleJahre:       tt.fields.TabelleJahre,
+			}
+			if got := invoiceDetails.ToTitle(tt.args.language); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("InvoiceDetails.ToTitle() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestInvoiceDetails_ToTableData(t *testing.T) {
+	type fields struct {
+		Creditor           Creditor
+		Ueberschrift       TranslatedText
+		TabelleAnzahl      TranslatedText
+		TabelleEinheit     TranslatedText
+		TabelleBezeichnung TranslatedText
+		TabellePreis       TranslatedText
+		TabelleBetrag      TranslatedText
+		TabelleAaren       TranslatedText
+		TabelleJahre       TranslatedText
+	}
+	type args struct {
+		language       string
+		debtorData     DebtorData
+		variableData   VariableData
+		calculatedData CalculatedData
+	}
+	tests := []struct {
+		name   string
+		fields fields
+		args   args
+		want   document.TableData
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			invoiceDetails := InvoiceDetails{
+				Creditor:           tt.fields.Creditor,
+				Ueberschrift:       tt.fields.Ueberschrift,
+				TabelleAnzahl:      tt.fields.TabelleAnzahl,
+				TabelleEinheit:     tt.fields.TabelleEinheit,
+				TabelleBezeichnung: tt.fields.TabelleBezeichnung,
+				TabellePreis:       tt.fields.TabellePreis,
+				TabelleBetrag:      tt.fields.TabelleBetrag,
+				TabelleAaren:       tt.fields.TabelleAaren,
+				TabelleJahre:       tt.fields.TabelleJahre,
+			}
+			if got := invoiceDetails.ToTableData(tt.args.language, tt.args.debtorData, tt.args.variableData, tt.args.calculatedData); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("InvoiceDetails.ToTableData() = %v, want %v", got, tt.want)
 			}
 		})
 	}

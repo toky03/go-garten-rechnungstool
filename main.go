@@ -36,10 +36,9 @@ func main() {
 			log.Panic(err)
 		}
 
-		document.AddAdressData(doc, debtor)
-		document.AddTitle(doc, debtor.Language, invoiceDetails)
-		document.AddTableHeader(doc, debtor.Language, invoiceDetails)
-		document.AddTableData(doc, debtor.Language, debtor, invoiceDetails, variableData, calculatedData)
+		document.AddAdressData(doc, debtor.ToReceiverAdress())
+		document.AddTitle(doc, invoiceDetails.ToTitle(debtor.Language))
+		document.AddTable(doc, invoiceDetails.ToTableData(debtor.Language, debtor, variableData, calculatedData))
 
 		doc.Image("data/logo.png", 10, 10, nil)
 
