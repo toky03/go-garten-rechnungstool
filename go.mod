@@ -27,4 +27,5 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
 
-replace github.com/72nd/swiss-qr-invoice v1.0.2 => ../Go/swiss-qr-invoice
+// replace solange notwendig bis die pullrequests https://github.com/72nd/swiss-qr-invoice/pull/3 und https://github.com/72nd/swiss-qr-invoice/pull/2 gemerged sind
+replace github.com/72nd/swiss-qr-invoice v1.0.2 => ./dependencies/swiss-qr-invoice
