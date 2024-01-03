@@ -4,11 +4,25 @@ import (
 	"fmt"
 	"time"
 
-	gopdf_wrapper "github.com/72nd/gopdf-wrapper"
 	"github.com/signintech/gopdf"
 )
 
-func AddAdressData(doc *gopdf_wrapper.Doc, receiver ReceiverAdress) {
+var now = time.Now
+
+type PdfDoc interface {
+	AddText(x, y float64, content string) error
+	AddFormattedText(x, y float64, content string, size int, style string)
+	SetFontSize(size int) error
+	SetFontStyle(style string) error
+	DefaultFontSize()
+	DefaultFontStyle()
+	SetPosition(x, y float64)
+	CellWithOption(rectangle *gopdf.Rect, text string, opt gopdf.CellOption) error
+	Image(picPath string, x float64, y float64, rect *gopdf.Rect) error
+	WritePdf(pdfPath string) error
+}
+
+func AddAdressData(doc PdfDoc, receiver ReceiverAdress) {
 
 	doc.AddText(130, 50, receiver.Header)
 	doc.AddText(130, 57, receiver.Name)
@@ -16,17 +30,17 @@ func AddAdressData(doc *gopdf_wrapper.Doc, receiver ReceiverAdress) {
 	doc.AddText(130, 71, receiver.City)
 }
 
-func AddTitle(doc *gopdf_wrapper.Doc, titleWithDate TitleWithDate) {
+func AddTitle(doc PdfDoc, titleWithDate TitleWithDate) {
 
-	now := time.Now()
+	now := now()
 
-	dateFormatted := fmt.Sprintf("%s, %02d. %02d. %04d", titleWithDate.City, now.Day(), now.Month(), now.Year())
+	dateFormatted := fmt.Sprintf("%s, %02d.%02d.%04d", titleWithDate.City, now.Day(), now.Month(), now.Year())
 	doc.AddText(130, 89, dateFormatted)
 
 	doc.AddFormattedText(20, 100, titleWithDate.Title, 14, "bold")
 }
 
-func AddTable(doc *gopdf_wrapper.Doc, tableData TableData) {
+func AddTable(doc PdfDoc, tableData TableData) {
 	doc.SetFontSize(12)
 	doc.SetFontStyle("bold")
 
@@ -65,7 +79,7 @@ func AddTable(doc *gopdf_wrapper.Doc, tableData TableData) {
 
 }
 
-func setTextAligned(doc *gopdf_wrapper.Doc, x, y float64, text string, alignment int, width float64, border int) {
+func setTextAligned(doc PdfDoc, x, y float64, text string, alignment int, width float64, border int) {
 	doc.SetPosition(x, y)
 	doc.CellWithOption(&gopdf.Rect{W: width, H: 4.5}, text, gopdf.CellOption{Align: alignment, Border: border})
 

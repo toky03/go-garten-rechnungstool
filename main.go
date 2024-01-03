@@ -3,11 +3,16 @@ package main
 import (
 	"fmt"
 	"log"
+	"strings"
+	"sync"
 
+	swissqrinvoice "github.com/72nd/swiss-qr-invoice"
 	"github.com/toky03/qr-invoice/document"
 	"github.com/toky03/qr-invoice/model"
 	"github.com/xuri/excelize/v2"
 )
+
+var waitGroup sync.WaitGroup
 
 func main() {
 
@@ -28,24 +33,38 @@ func main() {
 	variableData, err := model.ReadVariableData(excel)
 
 	for _, debtor := range debtors {
+		waitGroup.Add(1)
 		calculatedData := variableData.ToCalculatedTableData(debtor)
 		invoice := invoiceDetails.ToInvoiceDetails(debtor, calculatedData)
-
-		doc, err := invoice.Doc()
-		if err != nil {
-			log.Panic(err)
-		}
-
-		document.AddAdressData(doc, debtor.ToReceiverAdress())
-		document.AddTitle(doc, invoiceDetails.ToTitle(debtor.Language))
-		document.AddTable(doc, invoiceDetails.ToTableData(debtor.Language, debtor, variableData, calculatedData))
-
-		doc.Image("data/logo.png", 10, 10, nil)
-
-		if err := doc.WritePdf(fmt.Sprintf("rechnung_%s.pdf", debtor.Parzelle)); err != nil {
-			log.Panic(err)
-		}
-
+		go createDocument(debtor.Parzelle, invoice, debtor.ToReceiverAdress(), invoiceDetails.ToTitle(debtor.Language), invoiceDetails.ToTableData(debtor.Language, debtor, variableData, calculatedData))
 	}
 
+	waitGroup.Wait()
+
+}
+
+func createDocument(parzelle string, invoice swissqrinvoice.Invoice, receiverAdress document.ReceiverAdress, title document.TitleWithDate, tableData document.TableData) {
+
+	defer waitGroup.Done()
+	doc := createDocFromInvoice(invoice)
+
+	document.AddAdressData(doc, receiverAdress)
+	document.AddTitle(doc, title)
+	document.AddTable(doc, tableData)
+
+	doc.Image("data/logo.png", 10, 10, nil)
+
+	fileName := fmt.Sprintf("rechnung_%03s_%s.pdf", parzelle, strings.ReplaceAll(strings.ReplaceAll(receiverAdress.Name, " ", "_"), "/", ""))
+
+	if err := doc.WritePdf(fmt.Sprintf("bills/%s", fileName)); err != nil {
+		log.Panic(err)
+	}
+}
+
+func createDocFromInvoice(invoice swissqrinvoice.Invoice) (doc document.PdfDoc) {
+	doc, err := invoice.Doc()
+	if err != nil {
+		log.Panic(err)
+	}
+	return doc
 }

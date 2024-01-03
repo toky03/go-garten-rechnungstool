@@ -49,10 +49,12 @@ func ReadDebtorData(workbook *excelize.File) []DebtorData {
 		city := row[5]
 
 		parzelle := row[0]
+
 		are, err := strconv.ParseFloat(row[7], 32)
 		if err != nil {
 			cellName, _ := excelize.CoordinatesToCellName(7+1, i+1)
 			log.Printf("could not convert %s from sheet Mitgliederliste on Cell %s to number\n", row[7], cellName)
+			continue
 		}
 
 		var language string

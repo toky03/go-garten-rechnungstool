@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	swissqrinvoice "github.com/72nd/swiss-qr-invoice"
+	"github.com/signintech/gopdf"
 	"github.com/toky03/qr-invoice/document"
 )
 
@@ -189,32 +190,59 @@ func TestInvoiceDetails_ToInvoiceDetails(t *testing.T) {
 
 func TestDebtorData_ToReceiverAdress(t *testing.T) {
 	type fields struct {
-		Parzelle   string
-		Are        float32
-		IsVorstand bool
-		Language   string
-		LastName   string
-		Debtor     Debtor
+		Parzelle string
+		Debtor   Debtor
+		Language string
 	}
 	tests := []struct {
 		name   string
 		fields fields
 		want   document.ReceiverAdress
 	}{
-		// TODO: Add test cases.
+		{"debtor with all data german", fields{
+			Parzelle: "33",
+			Debtor: Debtor{
+				Name:    "Vor und Nachname",
+				Address: "Strasse xy",
+				Zip:     "3011",
+				City:    "Bern",
+			},
+			Language: "de",
+		},
+			document.ReceiverAdress{
+				Header: "Parzelle 33",
+				Name:   "Vor und Nachname",
+				Adress: "Strasse xy",
+				City:   "3011 Bern",
+			},
+		},
+		{"debtor with all data french", fields{
+			Parzelle: "33",
+			Debtor: Debtor{
+				Name:    "Vor und Nachname",
+				Address: "Strasse xy",
+				Zip:     "3011",
+				City:    "Bern",
+			},
+			Language: "fr",
+		},
+			document.ReceiverAdress{
+				Header: "Parcelle 33",
+				Name:   "Vor und Nachname",
+				Adress: "Strasse xy",
+				City:   "3011 Bern",
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			debtor := DebtorData{
-				Parzelle:   tt.fields.Parzelle,
-				Are:        tt.fields.Are,
-				IsVorstand: tt.fields.IsVorstand,
-				Language:   tt.fields.Language,
-				LastName:   tt.fields.LastName,
-				Debtor:     tt.fields.Debtor,
+				Parzelle: tt.fields.Parzelle,
+				Debtor:   tt.fields.Debtor,
+				Language: tt.fields.Language,
 			}
 			if got := debtor.ToReceiverAdress(); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("DebtorData.ToReceiverAdress() = %v, want %v", got, tt.want)
+				t.Errorf("DebtorData.ToReceiverAdress() = \n%v, want \n%v", got, tt.want)
 			}
 		})
 	}
@@ -222,15 +250,8 @@ func TestDebtorData_ToReceiverAdress(t *testing.T) {
 
 func TestInvoiceDetails_ToTitle(t *testing.T) {
 	type fields struct {
-		Creditor           Creditor
-		Ueberschrift       TranslatedText
-		TabelleAnzahl      TranslatedText
-		TabelleEinheit     TranslatedText
-		TabelleBezeichnung TranslatedText
-		TabellePreis       TranslatedText
-		TabelleBetrag      TranslatedText
-		TabelleAaren       TranslatedText
-		TabelleJahre       TranslatedText
+		Creditor     Creditor
+		Ueberschrift TranslatedText
 	}
 	type args struct {
 		language string
@@ -241,20 +262,44 @@ func TestInvoiceDetails_ToTitle(t *testing.T) {
 		args   args
 		want   document.TitleWithDate
 	}{
-		// TODO: Add test cases.
+		{
+			"Create Title German",
+			fields{
+				Creditor: Creditor{
+					City: "Biel",
+				},
+				Ueberschrift: TranslatedText{
+					De: "Ueberschrift abc",
+					Fr: "Title xyz",
+				},
+			},
+			args{language: "de"},
+			document.TitleWithDate{
+				Title: "Ueberschrift abc",
+				City:  "Biel"},
+		},
+		{
+			"Create Title French",
+			fields{
+				Creditor: Creditor{
+					City: "Bienne",
+				},
+				Ueberschrift: TranslatedText{
+					De: "Ueberschrift abc",
+					Fr: "Title xyz",
+				},
+			},
+			args{language: "fr"},
+			document.TitleWithDate{
+				Title: "Title xyz",
+				City:  "Bienne"},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			invoiceDetails := InvoiceDetails{
-				Creditor:           tt.fields.Creditor,
-				Ueberschrift:       tt.fields.Ueberschrift,
-				TabelleAnzahl:      tt.fields.TabelleAnzahl,
-				TabelleEinheit:     tt.fields.TabelleEinheit,
-				TabelleBezeichnung: tt.fields.TabelleBezeichnung,
-				TabellePreis:       tt.fields.TabellePreis,
-				TabelleBetrag:      tt.fields.TabelleBetrag,
-				TabelleAaren:       tt.fields.TabelleAaren,
-				TabelleJahre:       tt.fields.TabelleJahre,
+				Creditor:     tt.fields.Creditor,
+				Ueberschrift: tt.fields.Ueberschrift,
 			}
 			if got := invoiceDetails.ToTitle(tt.args.language); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("InvoiceDetails.ToTitle() = %v, want %v", got, tt.want)
@@ -265,8 +310,6 @@ func TestInvoiceDetails_ToTitle(t *testing.T) {
 
 func TestInvoiceDetails_ToTableData(t *testing.T) {
 	type fields struct {
-		Creditor           Creditor
-		Ueberschrift       TranslatedText
 		TabelleAnzahl      TranslatedText
 		TabelleEinheit     TranslatedText
 		TabelleBezeichnung TranslatedText
@@ -287,13 +330,264 @@ func TestInvoiceDetails_ToTableData(t *testing.T) {
 		args   args
 		want   document.TableData
 	}{
-		// TODO: Add test cases.
+		{
+			"Create table german",
+			fields{
+				TabelleAnzahl: TranslatedText{
+					De: "Anzahl",
+					Fr: "Nombre",
+				},
+				TabelleEinheit: TranslatedText{
+					De: "Einheit",
+					Fr: "Unité",
+				},
+				TabelleBezeichnung: TranslatedText{
+					De: "Bezeichnung",
+					Fr: "Description",
+				},
+				TabellePreis: TranslatedText{
+					De: "Preis",
+					Fr: "Prix",
+				},
+				TabelleBetrag: TranslatedText{
+					De: "Betrag",
+					Fr: "Montant",
+				},
+				TabelleAaren: TranslatedText{
+					De: "Aren",
+					Fr: "Ares",
+				},
+				TabelleJahre: TranslatedText{
+					De: "Jahre",
+					Fr: "Années",
+				},
+			},
+			args{
+				language: "de",
+				debtorData: DebtorData{
+					Are: 2.2123,
+				},
+				variableData: VariableData{
+					TextPachtzins: TranslatedText{
+						De: "Pachtzins",
+						Fr: "Fr: Pachtzins",
+					},
+					TextWasserbezug: TranslatedText{
+						De: "Wasserbezug",
+						Fr: "Fr: Wasserbezug",
+					},
+					TextGfAbonement: TranslatedText{
+						De: "GF Abonement",
+						Fr: "Fr: GF Abonement",
+					},
+					TextStrom: TranslatedText{
+						De: "Strom",
+						Fr: "Fr: Strom",
+					},
+					TextVersicherung: TranslatedText{
+						De: "Versicherung",
+						Fr: "Fr: Versicherung",
+					},
+					TextMitgliederbeitrag: TranslatedText{
+						De: "Mitgliederbeitrag",
+						Fr: "Fr: Mitgliederbeitrag",
+					},
+					TextReparaturFonds: TranslatedText{
+						De: "Reparaturfonds",
+						Fr: "Fr: Reparaturfonds",
+					},
+					TextVerwaltungskosten: TranslatedText{
+						De: "Verwaltungskosten",
+						Fr: "Fr: Verwaltungskosten",
+					},
+					Pachtzins:         5,
+					Wasserbezug:       1,
+					GfAbonement:       2,
+					Strom:             3,
+					Versicherung:      4,
+					Mitgliederbeitrag: 6,
+					Reparaturfonds:    7,
+					Verwaltungskosten: 8,
+				},
+				calculatedData: CalculatedData{
+					Pachtzins:         10,
+					Wasserbezug:       2,
+					GfAbonement:       4,
+					Strom:             6,
+					Versicherung:      8,
+					Mitgliederbeitrag: 12,
+					Reparaturfonds:    14,
+					Verwaltungskosten: 16,
+					Total:             200,
+				},
+			},
+			document.TableData{
+				Columns: []document.TableColumn{
+					{
+						Header:    "Anzahl",
+						Alignment: gopdf.Left,
+						Width:     35,
+						Rows:      []string{"2.2", "2.2", "1", "1", "1", "1", "1", "1", "Total"},
+					},
+					{
+						Header:    "Einheit",
+						Alignment: gopdf.Left,
+						Width:     30,
+						Rows:      []string{"Aren", "Aren", "Jahre", "Jahre", "Jahre", "Jahre", "Jahre", "Jahre", ""},
+					},
+					{
+						Header:    "Bezeichnung",
+						Alignment: gopdf.Left,
+						Width:     45,
+						Rows:      []string{"Pachtzins", "Wasserbezug", "GF Abonement", "Strom", "Versicherung", "Mitgliederbeitrag", "Reparaturfonds", "Verwaltungskosten", ""},
+					},
+					{
+						Header:    "Preis",
+						Alignment: gopdf.Right,
+						Width:     30,
+						Rows:      []string{"CHF 5.00", "CHF 1.00", "CHF 2.00", "CHF 3.00", "CHF 4.00", "CHF 6.00", "CHF 7.00", "CHF 8.00", ""},
+					},
+					{
+						Header:    "Betrag",
+						Alignment: gopdf.Right,
+						Width:     30,
+						Rows:      []string{"CHF 10.00", "CHF 2.00", "CHF 4.00", "CHF 6.00", "CHF 8.00", "CHF 12.00", "CHF 14.00", "CHF 16.00", "CHF 200.00"},
+					},
+				},
+				LastRowBold: true,
+			},
+		},
+		{
+			"Create table french",
+			fields{
+				TabelleAnzahl: TranslatedText{
+					De: "Anzahl",
+					Fr: "Nombre",
+				},
+				TabelleEinheit: TranslatedText{
+					De: "Einheit",
+					Fr: "Unité",
+				},
+				TabelleBezeichnung: TranslatedText{
+					De: "Bezeichnung",
+					Fr: "Description",
+				},
+				TabellePreis: TranslatedText{
+					De: "Preis",
+					Fr: "Prix",
+				},
+				TabelleBetrag: TranslatedText{
+					De: "Betrag",
+					Fr: "Montant",
+				},
+				TabelleAaren: TranslatedText{
+					De: "Aren",
+					Fr: "Ares",
+				},
+				TabelleJahre: TranslatedText{
+					De: "Jahre",
+					Fr: "Années",
+				},
+			},
+			args{
+				language: "fr",
+				debtorData: DebtorData{
+					Are: 2.2123,
+				},
+				variableData: VariableData{
+					TextPachtzins: TranslatedText{
+						De: "Pachtzins",
+						Fr: "Fr: Pachtzins",
+					},
+					TextWasserbezug: TranslatedText{
+						De: "Wasserbezug",
+						Fr: "Fr: Wasserbezug",
+					},
+					TextGfAbonement: TranslatedText{
+						De: "GF Abonement",
+						Fr: "Fr: GF Abonement",
+					},
+					TextStrom: TranslatedText{
+						De: "Strom",
+						Fr: "Fr: Strom",
+					},
+					TextVersicherung: TranslatedText{
+						De: "Versicherung",
+						Fr: "Fr: Versicherung",
+					},
+					TextMitgliederbeitrag: TranslatedText{
+						De: "Mitgliederbeitrag",
+						Fr: "Fr: Mitgliederbeitrag",
+					},
+					TextReparaturFonds: TranslatedText{
+						De: "Reparaturfonds",
+						Fr: "Fr: Reparaturfonds",
+					},
+					TextVerwaltungskosten: TranslatedText{
+						De: "Verwaltungskosten",
+						Fr: "Fr: Verwaltungskosten",
+					},
+					Pachtzins:         5,
+					Wasserbezug:       1,
+					GfAbonement:       2,
+					Strom:             3,
+					Versicherung:      4,
+					Mitgliederbeitrag: 6,
+					Reparaturfonds:    7,
+					Verwaltungskosten: 8,
+				},
+				calculatedData: CalculatedData{
+					Pachtzins:         10,
+					Wasserbezug:       2,
+					GfAbonement:       4,
+					Strom:             6,
+					Versicherung:      8,
+					Mitgliederbeitrag: 0,
+					Reparaturfonds:    14,
+					Verwaltungskosten: 16,
+					Total:             200,
+				},
+			},
+			document.TableData{
+				Columns: []document.TableColumn{
+					{
+						Header:    "Nombre",
+						Alignment: gopdf.Left,
+						Width:     35,
+						Rows:      []string{"2.2", "2.2", "1", "1", "1", "1", "1", "1", "Total"},
+					},
+					{
+						Header:    "Unité",
+						Alignment: gopdf.Left,
+						Width:     30,
+						Rows:      []string{"Ares", "Ares", "Années", "Années", "Années", "Années", "Années", "Années", ""},
+					},
+					{
+						Header:    "Description",
+						Alignment: gopdf.Left,
+						Width:     45,
+						Rows:      []string{"Fr: Pachtzins", "Fr: Wasserbezug", "Fr: GF Abonement", "Fr: Strom", "Fr: Versicherung", "Fr: Mitgliederbeitrag", "Fr: Reparaturfonds", "Fr: Verwaltungskosten", ""},
+					},
+					{
+						Header:    "Prix",
+						Alignment: gopdf.Right,
+						Width:     30,
+						Rows:      []string{"CHF 5.00", "CHF 1.00", "CHF 2.00", "CHF 3.00", "CHF 4.00", "CHF 6.00", "CHF 7.00", "CHF 8.00", ""},
+					},
+					{
+						Header:    "Montant",
+						Alignment: gopdf.Right,
+						Width:     30,
+						Rows:      []string{"CHF 10.00", "CHF 2.00", "CHF 4.00", "CHF 6.00", "CHF 8.00", "CHF     -", "CHF 14.00", "CHF 16.00", "CHF 200.00"},
+					},
+				},
+				LastRowBold: true,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			invoiceDetails := InvoiceDetails{
-				Creditor:           tt.fields.Creditor,
-				Ueberschrift:       tt.fields.Ueberschrift,
 				TabelleAnzahl:      tt.fields.TabelleAnzahl,
 				TabelleEinheit:     tt.fields.TabelleEinheit,
 				TabelleBezeichnung: tt.fields.TabelleBezeichnung,
