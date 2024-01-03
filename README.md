@@ -71,3 +71,6 @@ Programm zu starten `go run main.go`
 Nach erfolgreichem Lauf befinden sich die Rechnungen unter _bills_
 
 
+## Development Note
+Da wir gerne Sprachunterstützung haben und der [Pullrequest](https://github.com/72nd/swiss-qr-invoice/pull/2) noch nicht gemerged wurde, mussten wir den Fork lokal klonen und im [go.mod](./go.mod) referenzieren.
+
