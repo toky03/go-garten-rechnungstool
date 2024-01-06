@@ -168,6 +168,9 @@ func ReadInvoiceDetails(workbook *excelize.File) (InvoiceDetails, error) {
 	jahreDe, err := workbook.GetCellValue("Rechnungsdetails", "C14", excelize.Options{RawCellValue: true})
 	jahreFr, err := workbook.GetCellValue("Rechnungsdetails", "D14", excelize.Options{RawCellValue: true})
 
+	zusatzDe, err := workbook.GetCellValue("Rechnungsdetails", "C15", excelize.Options{RawCellValue: true})
+	zusatzFr, err := workbook.GetCellValue("Rechnungsdetails", "D15", excelize.Options{RawCellValue: true})
+
 	if err != nil {
 		return InvoiceDetails{}, fmt.Errorf("could not read invoice Data from Rechnungsdetails %s", err)
 	}
@@ -217,6 +220,10 @@ func ReadInvoiceDetails(workbook *excelize.File) (InvoiceDetails, error) {
 		TabelleJahre: TranslatedText{
 			De: jahreDe,
 			Fr: jahreFr,
+		},
+		Zusatz: TranslatedText{
+			De: zusatzDe,
+			Fr: zusatzFr,
 		},
 	}, nil
 }

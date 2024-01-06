@@ -20,6 +20,7 @@ type PdfDoc interface {
 	CellWithOption(rectangle *gopdf.Rect, text string, opt gopdf.CellOption) error
 	Image(picPath string, x float64, y float64, rect *gopdf.Rect) error
 	WritePdf(pdfPath string) error
+	AddMultilineText(x, y float64, content string)
 }
 
 func AddAdressData(doc PdfDoc, receiver ReceiverAdress) {
@@ -40,11 +41,15 @@ func AddTitle(doc PdfDoc, titleWithDate TitleWithDate) {
 	doc.AddFormattedText(20, 100, titleWithDate.Title, 14, "bold")
 }
 
+func AddText(doc PdfDoc, multilineText string) {
+	doc.AddMultilineText(20, 110, multilineText)
+}
+
 func AddTable(doc PdfDoc, tableData TableData) {
 	doc.SetFontSize(12)
 	doc.SetFontStyle("bold")
 
-	initialHeight := 110
+	initialHeight := 130
 	rowHeight := 6
 
 	cursor := 20.0

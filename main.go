@@ -36,20 +36,21 @@ func main() {
 		waitGroup.Add(1)
 		calculatedData := variableData.ToCalculatedTableData(debtor)
 		invoice := invoiceDetails.ToInvoiceDetails(debtor, calculatedData)
-		go createDocument(debtor.Parzelle, invoice, debtor.ToReceiverAdress(), invoiceDetails.ToTitle(debtor.Language), invoiceDetails.ToTableData(debtor.Language, debtor, variableData, calculatedData))
+		go createDocument(debtor.Parzelle, invoice, invoiceDetails.ToZusatz(debtor.Language), debtor.ToReceiverAdress(), invoiceDetails.ToTitle(debtor.Language), invoiceDetails.ToTableData(debtor.Language, debtor, variableData, calculatedData))
 	}
 
 	waitGroup.Wait()
 
 }
 
-func createDocument(parzelle string, invoice swissqrinvoice.Invoice, receiverAdress document.ReceiverAdress, title document.TitleWithDate, tableData document.TableData) {
+func createDocument(parzelle string, invoice swissqrinvoice.Invoice, zusatz string, receiverAdress document.ReceiverAdress, title document.TitleWithDate, tableData document.TableData) {
 
 	defer waitGroup.Done()
 	doc := createDocFromInvoice(invoice)
 
 	document.AddAdressData(doc, receiverAdress)
 	document.AddTitle(doc, title)
+	document.AddText(doc, zusatz)
 	document.AddTable(doc, tableData)
 
 	doc.Image("data/logo.png", 10, 10, nil)

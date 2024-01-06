@@ -36,12 +36,20 @@ func (p *MockPdf) AddText(x, y float64, content string) error {
 	return nil
 }
 
+func (p *MockPdf) AddMultilineText(x, y float64, content string) {
+	if p.textData[x] == nil {
+		p.textData[x] = make(map[float64]TextData)
+	}
+	p.textData[x][y] = TextData{text: content, style: p.currentStyle, size: p.currentFontSize}
+}
+
 func (p *MockPdf) AddFormattedText(x, y float64, content string, size int, style string) {
 	if p.textData[x] == nil {
 		p.textData[x] = make(map[float64]TextData)
 	}
 	p.textData[x][y] = TextData{text: content, style: style, size: size}
 }
+
 func (p *MockPdf) SetFontSize(size int) error {
 	p.currentFontSize = size
 	return nil
@@ -249,12 +257,12 @@ func TestAddTable(t *testing.T) {
 			},
 			MockPdf{
 				currentX:        30,
-				currentY:        128,
+				currentY:        148,
 				currentFontSize: 11,
 				currentStyle:    "default",
 				cells: map[float64]map[float64]Cell{
 					20: {
-						110: {
+						130: {
 							rect: gopdf.Rect{
 								W: 10,
 								H: 4.5,
@@ -265,7 +273,7 @@ func TestAddTable(t *testing.T) {
 							},
 							text: "Zeile 1",
 						},
-						116: {
+						136: {
 							rect: gopdf.Rect{
 								W: 10,
 								H: 4.5,
@@ -276,7 +284,7 @@ func TestAddTable(t *testing.T) {
 							},
 							text: "A",
 						},
-						122: {
+						142: {
 							rect: gopdf.Rect{
 								W: 10,
 								H: 4.5,
@@ -287,7 +295,7 @@ func TestAddTable(t *testing.T) {
 							},
 							text: "b",
 						},
-						128: {
+						148: {
 							rect: gopdf.Rect{
 								W: 10,
 								H: 4.5,
@@ -300,7 +308,7 @@ func TestAddTable(t *testing.T) {
 						},
 					},
 					30: {
-						110: {
+						130: {
 							rect: gopdf.Rect{
 								W: 30,
 								H: 4.5,
@@ -311,7 +319,7 @@ func TestAddTable(t *testing.T) {
 							},
 							text: "Zeile 2",
 						},
-						116: {
+						136: {
 							rect: gopdf.Rect{
 								W: 30,
 								H: 4.5,
@@ -322,7 +330,7 @@ func TestAddTable(t *testing.T) {
 							},
 							text: "X",
 						},
-						122: {
+						142: {
 							rect: gopdf.Rect{
 								W: 30,
 								H: 4.5,
@@ -333,7 +341,7 @@ func TestAddTable(t *testing.T) {
 							},
 							text: "y",
 						},
-						128: {
+						148: {
 							rect: gopdf.Rect{
 								W: 30,
 								H: 4.5,
@@ -354,6 +362,55 @@ func TestAddTable(t *testing.T) {
 			AddTable(tt.args.doc, tt.args.input)
 			if !reflect.DeepEqual(pdf, tt.want) {
 				t.Errorf("AddTable() = \n%v, \nwant \n%v", pdf, tt.want)
+			}
+		})
+	}
+}
+
+func TestAddText(t *testing.T) {
+
+	pdf := MockPdf{
+		textData:        make(map[float64]map[float64]TextData),
+		currentStyle:    "default",
+		currentFontSize: 11,
+	}
+	type args struct {
+		doc           PdfDoc
+		multilineText string
+	}
+	tests := []struct {
+		name string
+		args args
+		want MockPdf
+	}{
+		{
+			"Add Multiline Text",
+			args{
+				doc:           &pdf,
+				multilineText: "Input Text multiline \n next line",
+			},
+			MockPdf{
+				currentX:        0,
+				currentY:        0,
+				currentFontSize: 11,
+				currentStyle:    "default",
+				textData: map[float64]map[float64]TextData{
+					20: {
+						110: TextData{
+							text:  "Input Text multiline \n next line",
+							style: "default",
+							size:  11,
+						},
+					},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			AddText(tt.args.doc, tt.args.multilineText)
+			if !reflect.DeepEqual(pdf, tt.want) {
+				t.Errorf("AddMultilinetext() = \n%v, \nwant \n%v", pdf, tt.want)
 			}
 		})
 	}

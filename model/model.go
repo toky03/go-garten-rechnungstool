@@ -63,6 +63,7 @@ type InvoiceDetails struct {
 	TabelleBetrag      TranslatedText
 	TabelleAaren       TranslatedText
 	TabelleJahre       TranslatedText
+	Zusatz             TranslatedText
 }
 
 type CalculatedData struct {

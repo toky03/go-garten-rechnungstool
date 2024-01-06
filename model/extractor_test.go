@@ -246,6 +246,7 @@ func TestReadInvoiceDetails(t *testing.T) {
 					{"Betrag", "", "Betrag", "Montant"},
 					{"Aren", "", "Aren", "Are"},
 					{"Jahre", "", "Jahr", "Année"},
+					{"Zusatz", "", "DE Zusatz", "FR Zusatz"},
 				})},
 			want: InvoiceDetails{
 				Creditor: Creditor{
@@ -288,6 +289,10 @@ func TestReadInvoiceDetails(t *testing.T) {
 				TabelleJahre: TranslatedText{
 					De: "Jahr",
 					Fr: "Année",
+				},
+				Zusatz: TranslatedText{
+					De: "DE Zusatz",
+					Fr: "FR Zusatz",
 				},
 			}},
 	}

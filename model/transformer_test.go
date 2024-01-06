@@ -317,6 +317,7 @@ func TestInvoiceDetails_ToTableData(t *testing.T) {
 		TabelleBetrag      TranslatedText
 		TabelleAaren       TranslatedText
 		TabelleJahre       TranslatedText
+		Zusatz             TranslatedText
 	}
 	type args struct {
 		language       string
@@ -427,7 +428,7 @@ func TestInvoiceDetails_ToTableData(t *testing.T) {
 						Header:    "Anzahl",
 						Alignment: gopdf.Left,
 						Width:     35,
-						Rows:      []string{"2.2", "2.2", "1", "1", "1", "1", "1", "1", "Total"},
+						Rows:      []string{"2.21", "2.21", "1", "1", "1", "1", "1", "1", "Total"},
 					},
 					{
 						Header:    "Einheit",
@@ -487,6 +488,10 @@ func TestInvoiceDetails_ToTableData(t *testing.T) {
 				TabelleJahre: TranslatedText{
 					De: "Jahre",
 					Fr: "Années",
+				},
+				Zusatz: TranslatedText{
+					De: "Zusatz",
+					Fr: "FR. Zusatz",
 				},
 			},
 			args{
@@ -554,7 +559,7 @@ func TestInvoiceDetails_ToTableData(t *testing.T) {
 						Header:    "Nombre",
 						Alignment: gopdf.Left,
 						Width:     35,
-						Rows:      []string{"2.2", "2.2", "1", "1", "1", "1", "1", "1", "Total"},
+						Rows:      []string{"2.21", "2.21", "1", "1", "1", "1", "1", "1", "Total"},
 					},
 					{
 						Header:    "Unité",
@@ -595,9 +600,10 @@ func TestInvoiceDetails_ToTableData(t *testing.T) {
 				TabelleBetrag:      tt.fields.TabelleBetrag,
 				TabelleAaren:       tt.fields.TabelleAaren,
 				TabelleJahre:       tt.fields.TabelleJahre,
+				Zusatz:             tt.fields.Zusatz,
 			}
 			if got := invoiceDetails.ToTableData(tt.args.language, tt.args.debtorData, tt.args.variableData, tt.args.calculatedData); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("InvoiceDetails.ToTableData() = %v, want %v", got, tt.want)
+				t.Errorf("InvoiceDetails.ToTableData() = \n%v, \nwant \n%v", got, tt.want)
 			}
 		})
 	}

@@ -2,7 +2,6 @@ package model
 
 import (
 	"fmt"
-	"math"
 
 	swissqrinvoice "github.com/72nd/swiss-qr-invoice"
 	"github.com/signintech/gopdf"
@@ -93,6 +92,13 @@ func (invoiceDetails InvoiceDetails) ToTitle(language string) document.TitleWith
 
 }
 
+func (invoiceDetails InvoiceDetails) ToZusatz(language string) string {
+	if language == "de" {
+		return invoiceDetails.Zusatz.De
+	}
+	return invoiceDetails.Zusatz.Fr
+}
+
 func (invoiceDetails InvoiceDetails) ToTableData(language string, debtorData DebtorData, variableData VariableData, calculatedData CalculatedData) document.TableData {
 
 	anzahlColumn := document.TableColumn{
@@ -100,7 +106,7 @@ func (invoiceDetails InvoiceDetails) ToTableData(language string, debtorData Deb
 		Alignment: gopdf.Left,
 		Width:     35,
 		Rows: []string{
-			fmt.Sprintf("%.1f", debtorData.Are), fmt.Sprintf("%.1f", debtorData.Are), "1", "1", "1", "1", "1", "1", "Total"},
+			fmt.Sprintf("%.2f", debtorData.Are), fmt.Sprintf("%.2f", debtorData.Are), "1", "1", "1", "1", "1", "1", "Total"},
 	}
 
 	einheitColumn := document.TableColumn{
@@ -181,7 +187,7 @@ func (invoiceDetails InvoiceDetails) ToTableData(language string, debtorData Deb
 }
 
 func roundHalf(number float32) float32 {
-	return float32(math.Round(float64(number)*20) / 20)
+	return number
 }
 
 func tranlate(language string, text TranslatedText) string {
