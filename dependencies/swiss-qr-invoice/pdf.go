@@ -108,40 +108,40 @@ func renderBasics(doc *wrapper.Doc) error {
 }
 
 func receivingInformation(doc *wrapper.Doc, inv Invoice) error {
-	doc.AddFormattedText(5, yTop+5, i18n[inv.Language]["Empfangsschein"], 11, "bold")
-	doc.AddFormattedText(5, yTop+12, i18n[inv.Language]["Konto / Zahlbar an"], 6, "bold")
+	doc.AddFormattedText(10, yTop+5, i18n[inv.Language]["Empfangsschein"], 11, "bold")
+	doc.AddFormattedText(10, yTop+12, i18n[inv.Language]["Konto / Zahlbar an"], 6, "bold")
 
 	yReceiverBase := yTop + 12 + doc.LineHeight(6)
 	recCnt := 0.0
 	if inv.ReceiverIBAN != "" {
-		doc.AddSizedText(5, yReceiverBase, inv.ReceiverIBAN, 8)
+		doc.AddSizedText(10, yReceiverBase, inv.ReceiverIBAN, 8)
 		recCnt++
 	}
 	if inv.ReceiverName != "" {
-		doc.AddSizedText(5, yReceiverBase+doc.LineHeight(8)*recCnt, inv.ReceiverName, 8)
+		doc.AddSizedText(10, yReceiverBase+doc.LineHeight(8)*recCnt, inv.ReceiverName, 8)
 		recCnt++
 	}
 	if inv.ReceiverStreet != "" {
 		address := fmt.Sprintf("%s %s", inv.ReceiverStreet, inv.ReceiverNumber)
-		doc.AddSizedText(5, yReceiverBase+doc.LineHeight(8)*recCnt, address, 8)
+		doc.AddSizedText(10, yReceiverBase+doc.LineHeight(8)*recCnt, address, 8)
 		recCnt++
 	}
 	if inv.ReceiverZIPCode != "" || inv.ReceiverPlace != "" {
-		doc.AddSizedText(5, yReceiverBase+doc.LineHeight(8)*recCnt, fmt.Sprintf("%s %s", inv.ReceiverZIPCode, inv.ReceiverPlace), 8)
+		doc.AddSizedText(10, yReceiverBase+doc.LineHeight(8)*recCnt, fmt.Sprintf("%s %s", inv.ReceiverZIPCode, inv.ReceiverPlace), 8)
 		recCnt++
 	}
 
 	yReferenceBase := yReceiverBase + doc.LineHeight(8)*recCnt + doc.LineHeight(9)
 	if inv.Reference != "" {
-		doc.AddFormattedText(5, yReferenceBase, i18n[inv.Language]["Referenz"], 6, "bold")
-		doc.AddSizedText(5, yReferenceBase+doc.LineHeight(6), inv.Reference, 8)
+		doc.AddFormattedText(10, yReferenceBase, i18n[inv.Language]["Referenz"], 6, "bold")
+		doc.AddSizedText(10, yReferenceBase+doc.LineHeight(6), inv.Reference, 8)
 	}
 
 	yPayeeBase := yReferenceBase + doc.LineHeight(9) + doc.LineHeight(6) + doc.LineHeight(8)
 	if inv.Reference == "" {
 		yPayeeBase -= doc.LineHeight(6) + doc.LineHeight(8)
 	}
-	doc.AddFormattedText(5, yPayeeBase, i18n[inv.Language]["Zahlbar durch"], 6, "bold")
+	doc.AddFormattedText(10, yPayeeBase, i18n[inv.Language]["Zahlbar durch"], 6, "bold")
 	yPayeeBase += doc.LineHeight(8)
 	if inv.noPayee() {
 		emptyFields(doc, 5, yPayeeBase, 57, yPayeeBase+20)
@@ -149,16 +149,16 @@ func receivingInformation(doc *wrapper.Doc, inv Invoice) error {
 	}
 	pyeCnt := 0.0
 	if inv.PayeeName != "" {
-		doc.AddSizedText(5, yPayeeBase, inv.PayeeName, 8)
+		doc.AddSizedText(10, yPayeeBase, inv.PayeeName, 8)
 		pyeCnt++
 	}
 	if inv.PayeeStreet != "" {
 		address := fmt.Sprintf("%s %s", inv.PayeeStreet, inv.PayeeNumber)
-		doc.AddSizedText(5, yPayeeBase+doc.LineHeight(8)*pyeCnt, address, 8)
+		doc.AddSizedText(10, yPayeeBase+doc.LineHeight(8)*pyeCnt, address, 8)
 		pyeCnt++
 	}
 	if inv.PayeeZIPCode != "" || inv.PayeePlace != "" {
-		doc.AddSizedText(5, yPayeeBase+doc.LineHeight(8)*pyeCnt, fmt.Sprintf("%s %s", inv.PayeeZIPCode, inv.PayeePlace), 8)
+		doc.AddSizedText(10, yPayeeBase+doc.LineHeight(8)*pyeCnt, fmt.Sprintf("%s %s", inv.PayeeZIPCode, inv.PayeePlace), 8)
 	}
 
 	return nil
@@ -166,11 +166,11 @@ func receivingInformation(doc *wrapper.Doc, inv Invoice) error {
 
 func receivingAmount(doc *wrapper.Doc, inv Invoice) {
 	yAmountBase := yTop + 68
-	doc.AddFormattedText(5, yAmountBase, i18n[inv.Language]["Währung"], 6, "bold")
-	doc.AddFormattedText(18, yAmountBase, i18n[inv.Language]["Betrag"], 6, "bold")
-	doc.AddSizedText(5, yAmountBase+doc.LineHeight(9), inv.Currency, 8)
+	doc.AddFormattedText(10, yAmountBase, i18n[inv.Language]["Währung"], 6, "bold")
+	doc.AddFormattedText(23, yAmountBase, i18n[inv.Language]["Betrag"], 6, "bold")
+	doc.AddSizedText(10, yAmountBase+doc.LineHeight(9), inv.Currency, 8)
 	if inv.Amount != "" {
-		doc.AddSizedText(18, yAmountBase+doc.LineHeight(9), inv.Amount, 8)
+		doc.AddSizedText(23, yAmountBase+doc.LineHeight(9), inv.Amount, 8)
 	} else {
 		emptyFields(doc, 27, yAmountBase, 27+30, yAmountBase+10)
 	}
