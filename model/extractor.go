@@ -34,11 +34,11 @@ func ReadDebtorData(workbook *excelize.File) []DebtorData {
 		if len(row) < 12 {
 			isVorstand = false
 		} else {
-			isVorstand = row[11] == "J"
+			isVorstand = row[12] == "J"
 		}
 
 		zip := row[4]
-		lang := row[10]
+		lang := row[11]
 		if zip == "" || lang == "" {
 			continue
 		}

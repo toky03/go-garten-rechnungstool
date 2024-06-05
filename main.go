@@ -16,7 +16,7 @@ var waitGroup sync.WaitGroup
 
 func main() {
 
-	excel, err := excelize.OpenFile("data/mitgliederliste.xlsx")
+	excel, err := excelize.OpenFile("data/mitgliederliste_aktuell.xlsx")
 
 	if err != nil {
 		log.Printf("could not read excel file %s", err)
@@ -32,7 +32,12 @@ func main() {
 	invoiceDetails, err := model.ReadInvoiceDetails(excel)
 	variableData, err := model.ReadVariableData(excel)
 
+	stillOpen := []string{"11", "19", "33", "34", "68", "83", "97", "101", "131", "144", "145", "163", "165", "167", "179", "185"}
+
 	for _, debtor := range debtors {
+		if !contains(stillOpen, debtor.Parzelle) {
+			continue
+		}
 		waitGroup.Add(1)
 		calculatedData := variableData.ToCalculatedTableData(debtor)
 		invoice := invoiceDetails.ToInvoiceDetails(debtor, calculatedData)
@@ -41,6 +46,15 @@ func main() {
 
 	waitGroup.Wait()
 
+}
+
+func contains(s []string, e string) bool {
+	for _, a := range s {
+		if strings.TrimSpace(a) == strings.TrimSpace(e) {
+			return true
+		}
+	}
+	return false
 }
 
 func createDocument(parzelle string, invoice swissqrinvoice.Invoice, zusatz string, receiverAdress document.ReceiverAdress, title document.TitleWithDate, tableData document.TableData) {
