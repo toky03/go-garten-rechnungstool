@@ -16,7 +16,7 @@ var waitGroup sync.WaitGroup
 
 func main() {
 
-	excel, err := excelize.OpenFile("data/mitgliederliste_aktuell.xlsx")
+	excel, err := excelize.OpenFile("data/Mitgliederliste_Aktuell.xlsx")
 
 	if err != nil {
 		log.Printf("could not read excel file %s", err)
@@ -32,12 +32,7 @@ func main() {
 	invoiceDetails, err := model.ReadInvoiceDetails(excel)
 	variableData, err := model.ReadVariableData(excel)
 
-	stillOpen := []string{"11", "19", "33", "34", "68", "83", "97", "101", "131", "144", "145", "163", "165", "167", "179", "185"}
-
 	for _, debtor := range debtors {
-		if !contains(stillOpen, debtor.Parzelle) {
-			continue
-		}
 		waitGroup.Add(1)
 		calculatedData := variableData.ToCalculatedTableData(debtor)
 		invoice := invoiceDetails.ToInvoiceDetails(debtor, calculatedData)
@@ -59,13 +54,19 @@ func contains(s []string, e string) bool {
 
 func createDocument(parzelle string, invoice swissqrinvoice.Invoice, zusatz string, receiverAdress document.ReceiverAdress, title document.TitleWithDate, tableData document.TableData) {
 
+	stillOpen := []string{"68", "97", "101", "131", "179"}
+
 	defer waitGroup.Done()
+
+	if !contains(stillOpen, parzelle) {
+		return
+	}
 	doc := createDocFromInvoice(invoice)
 
 	document.AddAdressData(doc, receiverAdress)
 	document.AddTitle(doc, title)
 	document.AddText(doc, zusatz)
-	document.AddTable(doc, tableData)
+	//document.AddTable(doc, tableData)
 
 	doc.Image("data/logo.png", 10, 10, nil)
 

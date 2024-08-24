@@ -72,7 +72,7 @@ func (i InvoiceDetails) ToInvoiceDetails(debtor DebtorData, calculatedData Calcu
 		PayeeCountry:    debtor.Debtor.Country,
 		Currency:        "CHF",
 		Reference:       referenceWithPruefZiffer,
-		Amount:          fmt.Sprintf("%.2f", calculatedData.Total),
+		Amount:          fmt.Sprintf("%.2f", calculatedData.Total+25),
 		AdditionalInfo:  fmt.Sprintf("Parzelle %s", debtor.Parzelle),
 		Language:        debtor.Language,
 	}
