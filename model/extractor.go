@@ -25,13 +25,13 @@ func ReadDebtorData(workbook *excelize.File) []DebtorData {
 
 		}
 
-		if len(row) < 11 {
+		if len(row) < 10 {
 			continue
 		}
 
 		var isVorstand bool
 
-		if len(row) < 13 {
+		if len(row) < 12 {
 			isVorstand = false
 		} else {
 			isVorstand = row[12] == "J"
