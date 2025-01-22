@@ -16,7 +16,7 @@ var waitGroup sync.WaitGroup
 
 func main() {
 
-	excel, err := excelize.OpenFile("data/mitgliederliste_aktuell.xlsx")
+	excel, err := excelize.OpenFile("data/Mitgliederliste Aktuell.xlsx")
 
 	if err != nil {
 		log.Printf("could not read excel file %s", err)
@@ -32,16 +32,19 @@ func main() {
 	invoiceDetails, err := model.ReadInvoiceDetails(excel)
 	variableData, err := model.ReadVariableData(excel)
 
-	stillOpen := []string{"11", "19", "33", "34", "68", "83", "97", "101", "131", "144", "145", "163", "165", "167", "179", "185"}
-
 	for _, debtor := range debtors {
-		if !contains(stillOpen, debtor.Parzelle) {
-			continue
-		}
+
 		waitGroup.Add(1)
 		calculatedData := variableData.ToCalculatedTableData(debtor)
 		invoice := invoiceDetails.ToInvoiceDetails(debtor, calculatedData)
-		go createDocument(debtor.Parzelle, invoice, invoiceDetails.ToZusatz(debtor.Language), debtor.ToReceiverAdress(), invoiceDetails.ToTitle(debtor.Language), invoiceDetails.ToTableData(debtor.Language, debtor, variableData, calculatedData))
+		go createDocument(
+			debtor.Parzelle,
+			invoice,
+			invoiceDetails.ToZusatz(debtor.Language),
+			debtor.ToReceiverAdress(),
+			invoiceDetails.ToTitle(debtor.Language),
+			invoiceDetails.ToTableData(debtor.Language, debtor, variableData, calculatedData),
+		)
 	}
 
 	waitGroup.Wait()
@@ -57,7 +60,14 @@ func contains(s []string, e string) bool {
 	return false
 }
 
-func createDocument(parzelle string, invoice swissqrinvoice.Invoice, zusatz string, receiverAdress document.ReceiverAdress, title document.TitleWithDate, tableData document.TableData) {
+func createDocument(
+	parzelle string,
+	invoice swissqrinvoice.Invoice,
+	zusatz string,
+	receiverAdress document.ReceiverAdress,
+	title document.TitleWithDate,
+	tableData document.TableData,
+) {
 
 	defer waitGroup.Done()
 	doc := createDocFromInvoice(invoice)
@@ -69,9 +79,13 @@ func createDocument(parzelle string, invoice swissqrinvoice.Invoice, zusatz stri
 
 	doc.Image("data/logo.png", 10, 10, nil)
 
-	fileName := fmt.Sprintf("rechnung_%03s_%s.pdf", parzelle, strings.ReplaceAll(strings.ReplaceAll(receiverAdress.Name, " ", "_"), "/", ""))
+	fileName := fmt.Sprintf(
+		"rechnung_%03s_%s.pdf",
+		parzelle,
+		strings.ReplaceAll(strings.ReplaceAll(receiverAdress.Name, " ", "_"), "/", ""),
+	)
 
-	if err := doc.WritePdf(fmt.Sprintf("bills/%s", fileName)); err != nil {
+	if err := doc.WritePdf(fmt.Sprintf("bills/%s/%s", invoice.Language, fileName)); err != nil {
 		log.Panic(err)
 	}
 }
