@@ -31,7 +31,7 @@ func ReadDebtorData(workbook *excelize.File) []DebtorData {
 
 		var isVorstand bool
 
-		if len(row) < 12 {
+		if len(row) < 13 {
 			isVorstand = false
 		} else {
 			isVorstand = row[12] == "J"
@@ -53,7 +53,11 @@ func ReadDebtorData(workbook *excelize.File) []DebtorData {
 		are, err := strconv.ParseFloat(row[7], 32)
 		if err != nil {
 			cellName, _ := excelize.CoordinatesToCellName(7+1, i+1)
-			log.Printf("could not convert %s from sheet Mitgliederliste on Cell %s to number\n", row[7], cellName)
+			log.Printf(
+				"could not convert %s from sheet Mitgliederliste on Cell %s to number\n",
+				row[7],
+				cellName,
+			)
 			continue
 		}
 
@@ -138,41 +142,140 @@ func ReadVariableData(workbook *excelize.File) (VariableData, error) {
 
 func ReadInvoiceDetails(workbook *excelize.File) (InvoiceDetails, error) {
 
-	name, err := workbook.GetCellValue("Rechnungsdetails", "B1", excelize.Options{RawCellValue: true})
-	address, err := workbook.GetCellValue("Rechnungsdetails", "B2", excelize.Options{RawCellValue: true})
-	buildingNumber, err := workbook.GetCellValue("Rechnungsdetails", "B3", excelize.Options{RawCellValue: true})
-	zip, err := workbook.GetCellValue("Rechnungsdetails", "B4", excelize.Options{RawCellValue: true})
-	city, err := workbook.GetCellValue("Rechnungsdetails", "B5", excelize.Options{RawCellValue: true})
-	iban, err := workbook.GetCellValue("Rechnungsdetails", "B6", excelize.Options{RawCellValue: true})
-	ueberschriftDe, err := workbook.GetCellValue("Rechnungsdetails", "C7", excelize.Options{RawCellValue: true})
-	ueberschriftFr, err := workbook.GetCellValue("Rechnungsdetails", "D7", excelize.Options{RawCellValue: true})
+	name, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"B1",
+		excelize.Options{RawCellValue: true},
+	)
+	address, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"B2",
+		excelize.Options{RawCellValue: true},
+	)
+	buildingNumber, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"B3",
+		excelize.Options{RawCellValue: true},
+	)
+	zip, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"B4",
+		excelize.Options{RawCellValue: true},
+	)
+	city, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"B5",
+		excelize.Options{RawCellValue: true},
+	)
+	iban, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"B6",
+		excelize.Options{RawCellValue: true},
+	)
+	ueberschriftDe, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"C7",
+		excelize.Options{RawCellValue: true},
+	)
+	ueberschriftFr, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"D7",
+		excelize.Options{RawCellValue: true},
+	)
 
-	anzahlDe, err := workbook.GetCellValue("Rechnungsdetails", "C8", excelize.Options{RawCellValue: true})
-	anzahlFr, err := workbook.GetCellValue("Rechnungsdetails", "D8", excelize.Options{RawCellValue: true})
+	anzahlDe, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"C8",
+		excelize.Options{RawCellValue: true},
+	)
+	anzahlFr, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"D8",
+		excelize.Options{RawCellValue: true},
+	)
 
-	einheitDe, err := workbook.GetCellValue("Rechnungsdetails", "C9", excelize.Options{RawCellValue: true})
-	einheitFr, err := workbook.GetCellValue("Rechnungsdetails", "D9", excelize.Options{RawCellValue: true})
+	einheitDe, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"C9",
+		excelize.Options{RawCellValue: true},
+	)
+	einheitFr, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"D9",
+		excelize.Options{RawCellValue: true},
+	)
 
-	bezeichnungDe, err := workbook.GetCellValue("Rechnungsdetails", "C10", excelize.Options{RawCellValue: true})
-	bezeichnungFr, err := workbook.GetCellValue("Rechnungsdetails", "D10", excelize.Options{RawCellValue: true})
+	bezeichnungDe, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"C10",
+		excelize.Options{RawCellValue: true},
+	)
+	bezeichnungFr, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"D10",
+		excelize.Options{RawCellValue: true},
+	)
 
-	preisDe, err := workbook.GetCellValue("Rechnungsdetails", "C11", excelize.Options{RawCellValue: true})
-	preisFr, err := workbook.GetCellValue("Rechnungsdetails", "D11", excelize.Options{RawCellValue: true})
+	preisDe, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"C11",
+		excelize.Options{RawCellValue: true},
+	)
+	preisFr, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"D11",
+		excelize.Options{RawCellValue: true},
+	)
 
-	betragDe, err := workbook.GetCellValue("Rechnungsdetails", "C12", excelize.Options{RawCellValue: true})
-	betragFr, err := workbook.GetCellValue("Rechnungsdetails", "D12", excelize.Options{RawCellValue: true})
+	betragDe, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"C12",
+		excelize.Options{RawCellValue: true},
+	)
+	betragFr, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"D12",
+		excelize.Options{RawCellValue: true},
+	)
 
-	arenDe, err := workbook.GetCellValue("Rechnungsdetails", "C13", excelize.Options{RawCellValue: true})
-	arenFr, err := workbook.GetCellValue("Rechnungsdetails", "D13", excelize.Options{RawCellValue: true})
+	arenDe, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"C13",
+		excelize.Options{RawCellValue: true},
+	)
+	arenFr, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"D13",
+		excelize.Options{RawCellValue: true},
+	)
 
-	jahreDe, err := workbook.GetCellValue("Rechnungsdetails", "C14", excelize.Options{RawCellValue: true})
-	jahreFr, err := workbook.GetCellValue("Rechnungsdetails", "D14", excelize.Options{RawCellValue: true})
+	jahreDe, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"C14",
+		excelize.Options{RawCellValue: true},
+	)
+	jahreFr, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"D14",
+		excelize.Options{RawCellValue: true},
+	)
 
-	zusatzDe, err := workbook.GetCellValue("Rechnungsdetails", "C15", excelize.Options{RawCellValue: true})
-	zusatzFr, err := workbook.GetCellValue("Rechnungsdetails", "D15", excelize.Options{RawCellValue: true})
+	zusatzDe, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"C15",
+		excelize.Options{RawCellValue: true},
+	)
+	zusatzFr, err := workbook.GetCellValue(
+		"Rechnungsdetails",
+		"D15",
+		excelize.Options{RawCellValue: true},
+	)
 
 	if err != nil {
-		return InvoiceDetails{}, fmt.Errorf("could not read invoice Data from Rechnungsdetails %s", err)
+		return InvoiceDetails{}, fmt.Errorf(
+			"could not read invoice Data from Rechnungsdetails %s",
+			err,
+		)
 	}
 
 	if name == "" || address == "" || zip == "" || city == "" || iban == "" {
@@ -229,7 +332,11 @@ func ReadInvoiceDetails(workbook *excelize.File) (InvoiceDetails, error) {
 }
 
 func extractCellValueAsFloat32(workbook *excelize.File, cellName string) (float32, error) {
-	strValue, err := workbook.GetCellValue("Betraege", cellName, excelize.Options{RawCellValue: true})
+	strValue, err := workbook.GetCellValue(
+		"Betraege",
+		cellName,
+		excelize.Options{RawCellValue: true},
+	)
 	if err != nil {
 		return 0, err
 	}
@@ -246,11 +353,19 @@ func extractTranslation(workbook *excelize.File, columnIndex int) (TranslatedTex
 	cellNameFr, _ := excelize.CoordinatesToCellName(columnIndex, 2)
 	de, err := workbook.GetCellValue("Betraege", cellNameDe, excelize.Options{RawCellValue: true})
 	if err != nil || de == "" {
-		return TranslatedText{}, fmt.Errorf("could not extract value from Betraege %s %s", cellNameDe, err)
+		return TranslatedText{}, fmt.Errorf(
+			"could not extract value from Betraege %s %s",
+			cellNameDe,
+			err,
+		)
 	}
 	fr, err := workbook.GetCellValue("Betraege", cellNameFr, excelize.Options{RawCellValue: true})
 	if err != nil || fr == "" {
-		return TranslatedText{}, fmt.Errorf("could not extract value from Betraege %s %s", cellNameDe, err)
+		return TranslatedText{}, fmt.Errorf(
+			"could not extract value from Betraege %s %s",
+			cellNameDe,
+			err,
+		)
 	}
 
 	return TranslatedText{
