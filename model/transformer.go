@@ -2,6 +2,8 @@ package model
 
 import (
 	"fmt"
+	"strconv"
+	"time"
 
 	swissqrinvoice "github.com/72nd/swiss-qr-invoice"
 	"github.com/signintech/gopdf"
@@ -41,7 +43,20 @@ func (v VariableData) ToCalculatedTableData(debtor DebtorData) CalculatedData {
 
 }
 
-func (i InvoiceDetails) ToInvoiceDetails(debtor DebtorData, calculatedData CalculatedData) swissqrinvoice.Invoice {
+func (i InvoiceDetails) ToInvoiceDetails(
+	debtor DebtorData,
+	calculatedData CalculatedData,
+) swissqrinvoice.Invoice {
+	reference := fmt.Sprintf("%04d", time.Now().Year())
+	refNumber, err := strconv.Atoi(reference)
+	if err != nil {
+		return swissqrinvoice.Invoice{}
+	}
+	checkSum, err := calculateCheckSum(refNumber)
+	if err != nil {
+		return swissqrinvoice.Invoice{}
+	}
+	referenceWithPruefZiffer := fmt.Sprintf("RF%02d%021d", checkSum, refNumber)
 	return swissqrinvoice.Invoice{
 		ReceiverIBAN:    i.Creditor.Account,
 		IsQrIBAN:        false,
@@ -58,6 +73,7 @@ func (i InvoiceDetails) ToInvoiceDetails(debtor DebtorData, calculatedData Calcu
 		Currency:        "CHF",
 		Amount:          fmt.Sprintf("%.2f", calculatedData.Total),
 		AdditionalInfo:  fmt.Sprintf("Parzelle %s", debtor.Parzelle),
+		ReceiverNumber:  referenceWithPruefZiffer,
 		Language:        debtor.Language,
 	}
 }
@@ -99,14 +115,22 @@ func (invoiceDetails InvoiceDetails) ToZusatz(language string) string {
 	return invoiceDetails.Zusatz.Fr
 }
 
-func (invoiceDetails InvoiceDetails) ToTableData(language string, debtorData DebtorData, variableData VariableData, calculatedData CalculatedData) document.TableData {
+func (invoiceDetails InvoiceDetails) ToTableData(
+	language string,
+	debtorData DebtorData,
+	variableData VariableData,
+	calculatedData CalculatedData,
+) document.TableData {
 
 	anzahlColumn := document.TableColumn{
 		Header:    tranlate(language, invoiceDetails.TabelleAnzahl),
 		Alignment: gopdf.Left,
 		Width:     35,
 		Rows: []string{
-			fmt.Sprintf("%.2f", debtorData.Are), fmt.Sprintf("%.2f", debtorData.Are), "1", "1", "1", "1", "1", "1", "Total"},
+			fmt.Sprintf(
+				"%.2f",
+				debtorData.Are,
+			), fmt.Sprintf("%.2f", debtorData.Are), "1", "1", "1", "1", "1", "1", "Total"},
 	}
 
 	einheitColumn := document.TableColumn{
@@ -180,7 +204,13 @@ func (invoiceDetails InvoiceDetails) ToTableData(language string, debtorData Deb
 	}
 
 	return document.TableData{
-		Columns:     []document.TableColumn{anzahlColumn, einheitColumn, bezeichungColumn, preisColumn, betragColumn},
+		Columns: []document.TableColumn{
+			anzahlColumn,
+			einheitColumn,
+			bezeichungColumn,
+			preisColumn,
+			betragColumn,
+		},
 		LastRowBold: true,
 	}
 
