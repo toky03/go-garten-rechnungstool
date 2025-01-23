@@ -47,7 +47,7 @@ func (i InvoiceDetails) ToInvoiceDetails(
 	debtor DebtorData,
 	calculatedData CalculatedData,
 ) swissqrinvoice.Invoice {
-	reference := fmt.Sprintf("%04d", time.Now().Year())
+	reference := fmt.Sprintf("02%04d", time.Now().Year())
 	refNumber, err := strconv.Atoi(reference)
 	if err != nil {
 		return swissqrinvoice.Invoice{}
@@ -78,6 +78,20 @@ func (i InvoiceDetails) ToInvoiceDetails(
 	}
 }
 
+func calculateCheckSum(reference int) (int, error) {
+
+	// RF00 translated into Digits according to ISO-11649
+	// https://cdn.standards.iteh.ai/samples/50649/a769e57fc5a34724bac3a5d18a2b8407/ISO-11649-2009.pdf
+
+	prefixedReferenceNumber := fmt.Sprintf("%d271500", reference)
+	referenceNumber, err := strconv.Atoi(prefixedReferenceNumber)
+	if err != nil {
+		return 0, fmt.Errorf("Could not convert reference Number to int %s", err)
+	}
+	reminder := referenceNumber % 97
+	return 98 - reminder, nil
+
+}
 func (debtor DebtorData) ToReceiverAdress() document.ReceiverAdress {
 	var heading string
 	if debtor.Language == "de" {
