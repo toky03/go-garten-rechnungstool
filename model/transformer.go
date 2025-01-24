@@ -47,7 +47,7 @@ func (i InvoiceDetails) ToInvoiceDetails(
 	debtor DebtorData,
 	calculatedData CalculatedData,
 ) swissqrinvoice.Invoice {
-	reference := fmt.Sprintf("02%04d", time.Now().Year())
+	reference := fmt.Sprintf("%03s02%04d", debtor.Parzelle, time.Now().Year())
 	refNumber, err := strconv.Atoi(reference)
 	if err != nil {
 		return swissqrinvoice.Invoice{}
@@ -73,7 +73,7 @@ func (i InvoiceDetails) ToInvoiceDetails(
 		Currency:        "CHF",
 		Amount:          fmt.Sprintf("%.2f", calculatedData.Total),
 		AdditionalInfo:  fmt.Sprintf("Parzelle %s", debtor.Parzelle),
-		ReceiverNumber:  referenceWithPruefZiffer,
+		Reference:       referenceWithPruefZiffer,
 		Language:        debtor.Language,
 	}
 }

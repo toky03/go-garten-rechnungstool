@@ -7,6 +7,7 @@ import (
 	"sync"
 
 	swissqrinvoice "github.com/72nd/swiss-qr-invoice"
+	"github.com/signintech/gopdf"
 	"github.com/toky03/qr-invoice/document"
 	"github.com/toky03/qr-invoice/model"
 	"github.com/xuri/excelize/v2"
@@ -77,7 +78,7 @@ func createDocument(
 	document.AddText(doc, zusatz)
 	document.AddTable(doc, tableData)
 
-	doc.Image("data/logo.png", 10, 10, nil)
+	doc.Image("data/logo_neu.png", 10, 10, &gopdf.Rect{W: 120, H: 40})
 
 	fileName := fmt.Sprintf(
 		"rechnung_%03s_%s.pdf",
