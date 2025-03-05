@@ -78,7 +78,7 @@ func createDocument(
 	document.AddText(doc, zusatz)
 	document.AddTable(doc, tableData)
 
-	doc.Image("data/logo_neu.png", 10, 10, &gopdf.Rect{W: 120, H: 40})
+	doc.Image("data/logo_neu.png", 10, 10, &gopdf.Rect{W: 100, H: 33})
 
 	fileName := fmt.Sprintf(
 		"rechnung_%03s_%s.pdf",
