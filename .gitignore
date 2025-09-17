@@ -3,3 +3,4 @@ data
 cover.out
 qr-invoice*
 go.sum
+.env

@@ -17,7 +17,7 @@ type InvoiceDetailsProvider interface {
 	GetReceiverAddress() document.ReceiverAdress
 	GetTitle() document.TitleWithDate
 	GetTableData() document.TableData
-	GetSavePath() string
+	GetSavePath(basePath string) string
 	Skip() bool
-	GetImageData() document.ImageData
+	GetImageData(basePath string) document.ImageData
 }

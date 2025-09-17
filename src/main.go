@@ -2,35 +2,38 @@ package main
 
 import (
 	"log"
+	"os"
 	"strings"
 	"sync"
 
 	swissqrinvoice "github.com/72nd/swiss-qr-invoice"
+	"github.com/joho/godotenv"
 	"github.com/signintech/gopdf"
 	"github.com/toky03/qr-invoice/core"
 	"github.com/toky03/qr-invoice/document"
 	gartenexcelprovider "github.com/toky03/qr-invoice/garten_excel_provider"
-	"github.com/xuri/excelize/v2"
 )
 
 var waitGroup sync.WaitGroup
 
 func main() {
 
-	var debtorProvider core.DebtorProvider
+	godotenv.Load()
 
-	debtorProvider = gartenexcelprovider.CreateExcelDebtorProvider("../example_data/mitgliederliste.xlsx")
-
-	excel, err := excelize.OpenFile("../example_data/mitgliederliste.xlsx")
-
-	if err != nil {
-		log.Printf("could not read excel file %s", err)
+	basePath := os.Getenv("BASE_PATH")
+	if basePath == "" {
+		basePath = "."
 	}
 
+	savePath := os.Getenv("SAVE_PATH")
+	if savePath == "" {
+		savePath = "."
+	}
+
+	debtorProvider := gartenexcelprovider.CreateExcelDebtorProvider(basePath, "mitgliederliste.xlsx")
+
 	defer func() {
-		if err := excel.Close(); err != nil {
-			log.Printf("could not close excel file %s", err)
-		}
+		debtorProvider.Close()
 	}()
 
 	debtors := debtorProvider.All()
@@ -41,6 +44,8 @@ func main() {
 		}
 		waitGroup.Add(1)
 		go createDocument(
+			basePath,
+			savePath,
 			debtor,
 		)
 	}
@@ -49,7 +54,7 @@ func main() {
 
 }
 
-func createDocument(
+func createDocument(basePath, savePath string,
 	invoiceDetailsProvider core.InvoiceDetailsProvider,
 ) {
 
@@ -70,12 +75,12 @@ func createDocument(
 		document.AddTable(doc, invoiceDetailsProvider.GetTableData())
 	}
 
-	imageData := invoiceDetailsProvider.GetImageData()
+	imageData := invoiceDetailsProvider.GetImageData(basePath)
 	if imageData.Path != "" {
 		doc.Image(imageData.Path, imageData.Xpos, imageData.Ypos, &gopdf.Rect{W: imageData.Width, H: imageData.Height})
 	}
 
-	if err := doc.WritePdf(invoiceDetailsProvider.GetSavePath()); err != nil {
+	if err := doc.WritePdf(invoiceDetailsProvider.GetSavePath(savePath)); err != nil {
 		log.Panic(err)
 	}
 }

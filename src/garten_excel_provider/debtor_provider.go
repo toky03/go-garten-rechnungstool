@@ -25,11 +25,10 @@ type debtorDataImpl struct {
 	Title           document.TitleWithDate
 	TableData       document.TableData
 	SavePath        string
-	ImageData       document.ImageData
 }
 
-func CreateExcelDebtorProvider(filePath string) *gartenDebtorProviderImpl {
-	excelFile, err := excelize.OpenFile(filePath)
+func CreateExcelDebtorProvider(basePath, filePath string) *gartenDebtorProviderImpl {
+	excelFile, err := excelize.OpenFile(fmt.Sprintf("%s/%s", basePath, filePath))
 	if err != nil {
 		log.Printf("could not read excel file %s", err)
 		return nil
@@ -56,14 +55,6 @@ func CreateExcelDebtorProvider(filePath string) *gartenDebtorProviderImpl {
 func (p *gartenDebtorProviderImpl) All() iter.Seq[core.InvoiceDetailsProvider] {
 	paechter := ReadPaechterData(p.excelFile)
 
-	imageData := document.ImageData{
-		Path:   "../data/logo_neu.png",
-		Xpos:   10,
-		Ypos:   10,
-		Width:  100,
-		Height: 33,
-	}
-
 	return func(yield func(core.InvoiceDetailsProvider) bool) {
 		for _, debtor := range paechter {
 			fileName := fmt.Sprintf(
@@ -72,7 +63,7 @@ func (p *gartenDebtorProviderImpl) All() iter.Seq[core.InvoiceDetailsProvider] {
 				strings.ReplaceAll(strings.ReplaceAll(debtor.Debtor.Name, " ", "_"), "/", ""),
 			)
 
-			filePath := fmt.Sprintf("../bills/%s/%s", debtor.Language, fileName)
+			filePath := fmt.Sprintf("%s/%s", debtor.Language, fileName)
 
 			debtorProvider := debtorDataImpl{
 				Invoice:         p.invoiceDetails.ToInvoiceDetails(debtor, p.variableData.ToCalculatedTableData(debtor)),
@@ -81,7 +72,6 @@ func (p *gartenDebtorProviderImpl) All() iter.Seq[core.InvoiceDetailsProvider] {
 				Title:           p.invoiceDetails.ToTitle(debtor.Language),
 				TableData:       p.invoiceDetails.ToTableData(debtor.Language, debtor, p.variableData, p.variableData.ToCalculatedTableData(debtor)),
 				SavePath:        filePath,
-				ImageData:       imageData,
 			}
 			if !yield(debtorProvider) {
 				return
@@ -89,6 +79,12 @@ func (p *gartenDebtorProviderImpl) All() iter.Seq[core.InvoiceDetailsProvider] {
 		}
 	}
 
+}
+
+func (p *gartenDebtorProviderImpl) Close() {
+	if err := p.excelFile.Close(); err != nil {
+		log.Printf("could not close excel file %s", err)
+	}
 }
 
 func (d debtorDataImpl) GetInvoice() swissqrinvoice.Invoice {
@@ -106,12 +102,18 @@ func (d debtorDataImpl) GetTitle() document.TitleWithDate {
 func (d debtorDataImpl) GetTableData() document.TableData {
 	return d.TableData
 }
-func (d debtorDataImpl) GetSavePath() string {
-	return d.SavePath
+func (d debtorDataImpl) GetSavePath(basePath string) string {
+	return fmt.Sprintf("%s/%s", basePath, d.SavePath)
 }
 func (d debtorDataImpl) Skip() bool {
 	return false
 }
-func (d debtorDataImpl) GetImageData() document.ImageData {
-	return d.ImageData
+func (d debtorDataImpl) GetImageData(basePath string) document.ImageData {
+	return document.ImageData{
+		Path:   fmt.Sprintf("%s/%s", basePath, "data/logo_neu.png"),
+		Xpos:   10,
+		Ypos:   10,
+		Width:  100,
+		Height: 33,
+	}
 }
