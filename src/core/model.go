@@ -2,6 +2,7 @@ package core
 
 import (
 	"github.com/go-gota/gota/dataframe"
+	"github.com/go-gota/gota/series"
 )
 
 type InvoiceContent struct {
@@ -29,13 +30,17 @@ func (t TableData) ToInvoiceTable() InvoiceTable {
 	multiplicator := t.Dataframe.Col(t.MultiplicatorColumnName)
 	price := t.Dataframe.Col(t.PriceColumnName)
 
-	t.Dataframe.(func(s dataframe.Series) dataframe.Series) {
-		if s.Name() == t.TotalColumnName {
-			return dataframe.NewSeriesFloat64(t.TotalColumnName, nil)
-		}
-		return s
-	}, t.TotalColumnName)
-	t.Dataframe = t.Dataframe.Mutate(total.Name(t.TotalColumnName))
+	// Calculate total for each row
+	totalValues := make([]float64, t.Dataframe.Nrow())
+	for i := 0; i < t.Dataframe.Nrow(); i++ {
+		multVal := multiplicator.Elem(i).Float()
+		priceVal := price.Elem(i).Float()
+		totalValues[i] = multVal * priceVal
+	}
+
+	// Create new series with calculated totals
+	total := series.New(totalValues, series.Float, t.TotalColumnName)
+	t.Dataframe = t.Dataframe.Mutate(total)
 
 	headers := t.Dataframe.Names()
 	rows := make([][]string, t.Dataframe.Nrow())

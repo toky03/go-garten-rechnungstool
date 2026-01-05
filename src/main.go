@@ -30,7 +30,10 @@ func main() {
 		savePath = "."
 	}
 
-	debtorProvider := gartenexcelprovider.CreateExcelDebtorProvider(basePath, "mitgliederliste.xlsx")
+	debtorProvider := gartenexcelprovider.CreateExcelDebtorProvider(
+		basePath,
+		"Mitgliederliste Aktuell (1).xlsx",
+	)
 
 	defer func() {
 		debtorProvider.Close()
@@ -77,7 +80,12 @@ func createDocument(basePath, savePath string,
 
 	imageData := invoiceDetailsProvider.GetImageData(basePath)
 	if imageData.Path != "" {
-		doc.Image(imageData.Path, imageData.Xpos, imageData.Ypos, &gopdf.Rect{W: imageData.Width, H: imageData.Height})
+		doc.Image(
+			imageData.Path,
+			imageData.Xpos,
+			imageData.Ypos,
+			&gopdf.Rect{W: imageData.Width, H: imageData.Height},
+		)
 	}
 
 	if err := doc.WritePdf(invoiceDetailsProvider.GetSavePath(savePath)); err != nil {

@@ -66,12 +66,20 @@ func (p *gartenDebtorProviderImpl) All() iter.Seq[core.InvoiceDetailsProvider] {
 			filePath := fmt.Sprintf("%s/%s", debtor.Language, fileName)
 
 			debtorProvider := debtorDataImpl{
-				Invoice:         p.invoiceDetails.ToInvoiceDetails(debtor, p.variableData.ToCalculatedTableData(debtor)),
+				Invoice: p.invoiceDetails.ToInvoiceDetails(
+					debtor,
+					p.variableData.ToCalculatedTableData(debtor),
+				),
 				MultilineText:   p.invoiceDetails.ToZusatz(debtor.Language),
 				ReceiverAddress: debtor.ToReceiverAdress(),
 				Title:           p.invoiceDetails.ToTitle(debtor.Language),
-				TableData:       p.invoiceDetails.ToTableData(debtor.Language, debtor, p.variableData, p.variableData.ToCalculatedTableData(debtor)),
-				SavePath:        filePath,
+				TableData: p.invoiceDetails.ToTableData(
+					debtor.Language,
+					debtor,
+					p.variableData,
+					p.variableData.ToCalculatedTableData(debtor),
+				),
+				SavePath: filePath,
 			}
 			if !yield(debtorProvider) {
 				return
@@ -110,7 +118,7 @@ func (d debtorDataImpl) Skip() bool {
 }
 func (d debtorDataImpl) GetImageData(basePath string) document.ImageData {
 	return document.ImageData{
-		Path:   fmt.Sprintf("%s/%s", basePath, "data/logo_neu.png"),
+		Path:   fmt.Sprintf("%s/%s", basePath, "logo_neu.png"),
 		Xpos:   10,
 		Ypos:   10,
 		Width:  100,

@@ -35,7 +35,13 @@ func AddTitle(doc PdfDoc, titleWithDate TitleWithDate) {
 
 	now := now()
 
-	dateFormatted := fmt.Sprintf("%s, %02d.%02d.%04d", titleWithDate.City, now.Day(), now.Month(), now.Year())
+	dateFormatted := fmt.Sprintf(
+		"%s, %02d.%02d.%04d",
+		titleWithDate.City,
+		now.Day(),
+		now.Month(),
+		now.Year(),
+	)
 	doc.AddText(130, 89, dateFormatted)
 
 	doc.AddFormattedText(20, 100, titleWithDate.Title, 14, "bold")
@@ -43,6 +49,11 @@ func AddTitle(doc PdfDoc, titleWithDate TitleWithDate) {
 
 func AddText(doc PdfDoc, multilineText string) {
 	doc.AddMultilineText(20, 110, multilineText)
+}
+
+func AddImage(doc PdfDoc, imagePath string, x, y float64, width, height float64) error {
+	rect := &gopdf.Rect{W: width, H: height}
+	return doc.Image(imagePath, x, y, rect)
 }
 
 func AddTable(doc PdfDoc, tableData TableData) {
@@ -55,7 +66,15 @@ func AddTable(doc PdfDoc, tableData TableData) {
 	cursor := 20.0
 
 	for _, column := range tableData.Columns {
-		setTextAligned(doc, cursor, float64(initialHeight), column.Header, column.Alignment, column.Width, gopdf.Bottom)
+		setTextAligned(
+			doc,
+			cursor,
+			float64(initialHeight),
+			column.Header,
+			column.Alignment,
+			column.Width,
+			gopdf.Bottom,
+		)
 		cursor += column.Width
 	}
 
@@ -73,7 +92,15 @@ func AddTable(doc PdfDoc, tableData TableData) {
 				doc.SetFontStyle("bold")
 			}
 
-			setTextAligned(doc, cursor, float64(initialHeight+(i+1)*rowHeight), columnRow, column.Alignment, column.Width, 0)
+			setTextAligned(
+				doc,
+				cursor,
+				float64(initialHeight+(i+1)*rowHeight),
+				columnRow,
+				column.Alignment,
+				column.Width,
+				0,
+			)
 
 		}
 		cursor += column.Width
@@ -84,8 +111,19 @@ func AddTable(doc PdfDoc, tableData TableData) {
 
 }
 
-func setTextAligned(doc PdfDoc, x, y float64, text string, alignment int, width float64, border int) {
+func setTextAligned(
+	doc PdfDoc,
+	x, y float64,
+	text string,
+	alignment int,
+	width float64,
+	border int,
+) {
 	doc.SetPosition(x, y)
-	doc.CellWithOption(&gopdf.Rect{W: width, H: 4.5}, text, gopdf.CellOption{Align: alignment, Border: border})
+	doc.CellWithOption(
+		&gopdf.Rect{W: width, H: 4.5},
+		text,
+		gopdf.CellOption{Align: alignment, Border: border},
+	)
 
 }

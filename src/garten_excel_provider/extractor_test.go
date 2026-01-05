@@ -21,14 +21,55 @@ func TestReadDebtorData(t *testing.T) {
 		{
 			name: "empty data", args: args{
 				workbook: createExampleFileWithSheet("Mitgliederliste", [][]string{
-					{"Parzelle", "Nachname", "Vorname", "Adresse", "plz", "Ort", "", "Aare", "", "", "Sprache"},
+					{
+						"Parzelle",
+						"Nachname",
+						"Vorname",
+						"Adresse",
+						"plz",
+						"Ort",
+						"",
+						"Aare",
+						"",
+						"",
+						"Sprache",
+						"Vorstand",
+					},
 				})},
 			want: []PaechterData{}},
 		{
 			name: "single row with no value in last column",
 			args: args{workbook: createExampleFileWithSheet("Mitgliederliste", [][]string{
-				{"Parzelle", "Nachname", "Vorname", "Adresse", "plz", "Ort", "", "Aare", "", "", "Sprache"},
-				{"1", "Simpson", "Homer", "Evergreen Terrace 742", "3011", "Bern", "", "2.50", "", "", "D"}})},
+				{
+					"Parzelle",
+					"Nachname",
+					"Vorname",
+					"Adresse",
+					"plz",
+					"Ort",
+					"",
+					"Aare",
+					"",
+					"",
+					"",
+					"Sprache",
+					"Vorstand",
+				},
+				{
+					"1",
+					"Simpson",
+					"Homer",
+					"Evergreen Terrace 742",
+					"3011",
+					"Bern",
+					"",
+					"2.50",
+					"",
+					"",
+					"",
+					"D",
+					"",
+				}})},
 			want: []PaechterData{
 				{
 					Parzelle:   "1",
@@ -48,9 +89,51 @@ func TestReadDebtorData(t *testing.T) {
 		{
 			name: "multiple rows",
 			args: args{workbook: createExampleFileWithSheet("Mitgliederliste", [][]string{
-				{"Parzelle", "Nachname", "Vorname", "Adresse", "plz", "Ort", "", "Aare", "", "", "Sprache"},
-				{"1", "Simpson", "Homer", "Evergreen Terrace 742", "3011", "Bern", "", "2.50", "", "", "D"},
-				{"2", "Simpson", "Marge", "Evergreen Terrace 742", "3011", "Bern", "", "2.50", "", "", "D", "J"},
+				{
+					"Parzelle",
+					"Nachname",
+					"Vorname",
+					"Adresse",
+					"plz",
+					"Ort",
+					"",
+					"Aare",
+					"",
+					"",
+					"",
+					"Sprache",
+					"Vorstand",
+				},
+				{
+					"1",
+					"Simpson",
+					"Homer",
+					"Evergreen Terrace 742",
+					"3011",
+					"Bern",
+					"",
+					"2.50",
+					"",
+					"",
+					"",
+					"D",
+					"",
+				},
+				{
+					"2",
+					"Simpson",
+					"Marge",
+					"Evergreen Terrace 742",
+					"3011",
+					"Bern",
+					"",
+					"2.50",
+					"",
+					"",
+					"",
+					"D",
+					"J",
+				},
 			})},
 			want: []PaechterData{
 				{
@@ -104,8 +187,26 @@ func TestReadVariableData(t *testing.T) {
 		{
 			name: "read data from second line", args: args{
 				workbook: createExampleFileWithSheet("Betraege", [][]string{
-					{"pachtzins", "wasserbezug", "GF Abonement", "Strom", "Versicherung", "Mitgliederbeitrag", "Reparaturfonds", "Verwaltungskosten"},
-					{"Fr pachtzins", "Fr wasserbezug", "Fr GF Abonement", "Fr Strom", "Fr Versicherung", "Fr Mitgliederbeitrag", "Fr Reparaturfonds", "Fr Verwaltungskosten"},
+					{
+						"pachtzins",
+						"wasserbezug",
+						"GF Abonement",
+						"Strom",
+						"Versicherung",
+						"Mitgliederbeitrag",
+						"Reparaturfonds",
+						"Verwaltungskosten",
+					},
+					{
+						"Fr pachtzins",
+						"Fr wasserbezug",
+						"Fr GF Abonement",
+						"Fr Strom",
+						"Fr Versicherung",
+						"Fr Mitgliederbeitrag",
+						"Fr Reparaturfonds",
+						"Fr Verwaltungskosten",
+					},
 					{"10", "20", "5.5", "8", "9", "50", "11.9", "22"},
 				})},
 			want: VariableData{
@@ -172,7 +273,10 @@ func TestReadVariableDataWithError(t *testing.T) {
 		{
 			name: "empty data should panic", args: args{
 				workbook: createExampleFileWithSheet("Betraege", [][]string{})},
-			want: fmt.Errorf("could not read variable Data from Betraege %s", "strconv.ParseFloat: parsing \"\": invalid syntax")},
+			want: fmt.Errorf(
+				"could not read variable Data from Betraege %s",
+				"strconv.ParseFloat: parsing \"\": invalid syntax",
+			)},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -195,7 +299,9 @@ func TestReadInvoiceDetailsWithError(t *testing.T) {
 		{
 			name: "sheet does not exist", args: args{
 				workbook: createExampleFileWithSheet("Betraege", [][]string{})},
-			want: fmt.Errorf("could not read invoice Data from Rechnungsdetails sheet Rechnungsdetails does not exist"),
+			want: fmt.Errorf(
+				"could not read invoice Data from Rechnungsdetails sheet Rechnungsdetails does not exist",
+			),
 		},
 		{
 			name: "empty data return error", args: args{

@@ -1,8 +1,10 @@
 package gartenexcelprovider
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
+	"time"
 
 	swissqrinvoice "github.com/72nd/swiss-qr-invoice"
 	"github.com/signintech/gopdf"
@@ -171,6 +173,7 @@ func TestInvoiceDetails_ToInvoiceDetails(t *testing.T) {
 				Language:        "de",
 				Currency:        "CHF",
 				PayeePlace:      "Bern",
+				Reference:       fmt.Sprintf("RF060000000000000%s02%d", "99", time.Now().Year()),
 				PayeeCountry:    "CH",
 			},
 		},
@@ -181,7 +184,10 @@ func TestInvoiceDetails_ToInvoiceDetails(t *testing.T) {
 				Creditor:     tt.fields.Creditor,
 				Ueberschrift: tt.fields.Ueberschrift,
 			}
-			if got := i.ToInvoiceDetails(tt.args.debtor, tt.args.calculatedData); !reflect.DeepEqual(got, tt.want) {
+			if got := i.ToInvoiceDetails(tt.args.debtor, tt.args.calculatedData); !reflect.DeepEqual(
+				got,
+				tt.want,
+			) {
 				t.Errorf("InvoiceDetails.ToInvoiceDetails() = %v, want %v", got, tt.want)
 			}
 		})
@@ -434,25 +440,65 @@ func TestInvoiceDetails_ToTableData(t *testing.T) {
 						Header:    "Einheit",
 						Alignment: gopdf.Left,
 						Width:     30,
-						Rows:      []string{"Aren", "Aren", "Jahre", "Jahre", "Jahre", "Jahre", "Jahre", "Jahre", ""},
+						Rows: []string{
+							"Aren",
+							"Aren",
+							"Jahre",
+							"Jahre",
+							"Jahre",
+							"Jahre",
+							"Jahre",
+							"Jahre",
+							"",
+						},
 					},
 					{
 						Header:    "Bezeichnung",
 						Alignment: gopdf.Left,
 						Width:     45,
-						Rows:      []string{"Pachtzins", "Wasserbezug", "GF Abonement", "Strom", "Versicherung", "Mitgliederbeitrag", "Reparaturfonds", "Verwaltungskosten", ""},
+						Rows: []string{
+							"Pachtzins",
+							"Wasserbezug",
+							"GF Abonement",
+							"Strom",
+							"Versicherung",
+							"Mitgliederbeitrag",
+							"Reparaturfonds",
+							"Verwaltungskosten",
+							"",
+						},
 					},
 					{
 						Header:    "Preis",
 						Alignment: gopdf.Right,
 						Width:     30,
-						Rows:      []string{"CHF 5.00", "CHF 1.00", "CHF 2.00", "CHF 3.00", "CHF 4.00", "CHF 6.00", "CHF 7.00", "CHF 8.00", ""},
+						Rows: []string{
+							"CHF 5.00",
+							"CHF 1.00",
+							"CHF 2.00",
+							"CHF 3.00",
+							"CHF 4.00",
+							"CHF 6.00",
+							"CHF 7.00",
+							"CHF 8.00",
+							"",
+						},
 					},
 					{
 						Header:    "Betrag",
 						Alignment: gopdf.Right,
 						Width:     30,
-						Rows:      []string{"CHF 10.00", "CHF 2.00", "CHF 4.00", "CHF 6.00", "CHF 8.00", "CHF 12.00", "CHF 14.00", "CHF 16.00", "CHF 200.00"},
+						Rows: []string{
+							"CHF 10.00",
+							"CHF 2.00",
+							"CHF 4.00",
+							"CHF 6.00",
+							"CHF 8.00",
+							"CHF 12.00",
+							"CHF 14.00",
+							"CHF 16.00",
+							"CHF 200.00",
+						},
 					},
 				},
 				LastRowBold: true,
@@ -565,25 +611,65 @@ func TestInvoiceDetails_ToTableData(t *testing.T) {
 						Header:    "Unité",
 						Alignment: gopdf.Left,
 						Width:     30,
-						Rows:      []string{"Ares", "Ares", "Années", "Années", "Années", "Années", "Années", "Années", ""},
+						Rows: []string{
+							"Ares",
+							"Ares",
+							"Années",
+							"Années",
+							"Années",
+							"Années",
+							"Années",
+							"Années",
+							"",
+						},
 					},
 					{
 						Header:    "Description",
 						Alignment: gopdf.Left,
 						Width:     45,
-						Rows:      []string{"Fr: Pachtzins", "Fr: Wasserbezug", "Fr: GF Abonement", "Fr: Strom", "Fr: Versicherung", "Fr: Mitgliederbeitrag", "Fr: Reparaturfonds", "Fr: Verwaltungskosten", ""},
+						Rows: []string{
+							"Fr: Pachtzins",
+							"Fr: Wasserbezug",
+							"Fr: GF Abonement",
+							"Fr: Strom",
+							"Fr: Versicherung",
+							"Fr: Mitgliederbeitrag",
+							"Fr: Reparaturfonds",
+							"Fr: Verwaltungskosten",
+							"",
+						},
 					},
 					{
 						Header:    "Prix",
 						Alignment: gopdf.Right,
 						Width:     30,
-						Rows:      []string{"CHF 5.00", "CHF 1.00", "CHF 2.00", "CHF 3.00", "CHF 4.00", "CHF 6.00", "CHF 7.00", "CHF 8.00", ""},
+						Rows: []string{
+							"CHF 5.00",
+							"CHF 1.00",
+							"CHF 2.00",
+							"CHF 3.00",
+							"CHF 4.00",
+							"CHF 6.00",
+							"CHF 7.00",
+							"CHF 8.00",
+							"",
+						},
 					},
 					{
 						Header:    "Montant",
 						Alignment: gopdf.Right,
 						Width:     30,
-						Rows:      []string{"CHF 10.00", "CHF 2.00", "CHF 4.00", "CHF 6.00", "CHF 8.00", "CHF     -", "CHF 14.00", "CHF 16.00", "CHF 200.00"},
+						Rows: []string{
+							"CHF 10.00",
+							"CHF 2.00",
+							"CHF 4.00",
+							"CHF 6.00",
+							"CHF 8.00",
+							"CHF     -",
+							"CHF 14.00",
+							"CHF 16.00",
+							"CHF 200.00",
+						},
 					},
 				},
 				LastRowBold: true,
@@ -602,7 +688,10 @@ func TestInvoiceDetails_ToTableData(t *testing.T) {
 				TabelleJahre:       tt.fields.TabelleJahre,
 				Zusatz:             tt.fields.Zusatz,
 			}
-			if got := invoiceDetails.ToTableData(tt.args.language, tt.args.debtorData, tt.args.variableData, tt.args.calculatedData); !reflect.DeepEqual(got, tt.want) {
+			if got := invoiceDetails.ToTableData(tt.args.language, tt.args.debtorData, tt.args.variableData, tt.args.calculatedData); !reflect.DeepEqual(
+				got,
+				tt.want,
+			) {
 				t.Errorf("InvoiceDetails.ToTableData() = \n%v, \nwant \n%v", got, tt.want)
 			}
 		})
