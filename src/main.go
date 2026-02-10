@@ -11,7 +11,7 @@ import (
 	"github.com/signintech/gopdf"
 	"github.com/toky03/qr-invoice/core"
 	"github.com/toky03/qr-invoice/document"
-	gartenexcelprovider "github.com/toky03/qr-invoice/garten_excel_provider"
+	mahnungprovider "github.com/toky03/qr-invoice/mahnung_provider"
 )
 
 var waitGroup sync.WaitGroup
@@ -30,10 +30,7 @@ func main() {
 		savePath = "."
 	}
 
-	debtorProvider := gartenexcelprovider.CreateExcelDebtorProvider(
-		basePath,
-		"Mitgliederliste Aktuell (1).xlsx",
-	)
+	debtorProvider := mahnungprovider.CreateMahnungProvider()
 
 	defer func() {
 		debtorProvider.Close()
