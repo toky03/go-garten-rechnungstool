@@ -4,3 +4,7 @@ cover.out
 qr-invoice*
 go.sum
 .env
+
+src/mahnung_provider/*
+
+.venv/

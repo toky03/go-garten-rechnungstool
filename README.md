@@ -6,11 +6,12 @@ Golang installiert [Golang Installation](https://go.dev/doc/install)
 1. diese Git Projekt klonen
 3. Abhängige Dateien in einen Unterordner namens _data_ hinzufügen
   a. _logo.png_ Logo welches als Absender auf den Brief gedruckt werden soll
-  b. _mitgliederliste.xlsx_ Excel Datei mit den Daten siehe [Struktur in der mitgliederliste](#struktur-in-mitgliederliste)
+  b. _Mitgliederliste Aktuell.xlsx_ Excel Datei mit den Daten siehe [Struktur in der mitgliederliste](#struktur-in-mitgliederliste)
+  c. _Rechnungsvariabeln.xslx_ Excel Datei mit den Daten zu den Rechnungen 
   c. _bills_ Ordner in den die Rechnungen als Pdf erstellt werden sollen
 
 
-#### Struktur im Excel **mitgliederliste.xlsx**
+#### Struktur im Excel **Mitgliederliste Aktuell.xlsx**
 Damit die Daten korrekt aus dem Excel gelesen werden können müssen die folgenden Reiter mit extakt dem angegebenen Namen vorhanden sein
 
 > Ein Beispiel Excel mit der geforderten Struktur ist im Ordner [_example_data_](./example_data/mitgliederliste.xlsx) hinterlegt.
@@ -21,6 +22,7 @@ Die folgende Tabelle Zeigt die Mindestandorderung an das Tabellenblatt _Mitglied
 |----------|------|---------|---------|--------|-----|------------|-----------|--- |---|-----------|----------|		
 |Parzellen nummer|Name als text|Vorname als Text|Strasse und Hausnummer|Postleitzahl|Ortschaftsnamen|Telefon (wird nicht benötigt)|Anzahl Aren als Zahlenwert|Leere Spalte|Leere Spalte|Sprache 'D' oder 'F' |'J' falls Mitglied Vorstansmitglied ist ansonsten leer|	
 
+#### Struktur im Excel **Rechnungsvariabeln.xslx**
 ##### _Betraege_
 Diese Tabelle _muss_ explizit so ausgefüllt werden
 alle Einträge sind in derselben Währung als Zahl anzugeben. Die ersten beiden Zeilen Werden für die Übersetzungen der Bezeichnung verwendet. Die erste Zeile ist Deutsch und die zweite Französisch.
@@ -54,6 +56,11 @@ Ab Zeile 7 werden wieder die Übersetzungen eingetragen. Hier handelt es sich um
 | Tabelle Aaren | | Aren | Are |
 | Tabelle Jahre | | Jahr | Année |
 
+#### _Individuelle Rechnungen_ nur für Individuelle Rechnungsstellungen
+
+|Parzelle |	Betrag	| Betreff|
+| ---- | ---- | ---- |
+| Referenzierte Parzellennummer| Rechnungsbetrag | Text, der in der QR Rechnung erscheinen soll|
 
 ## Anwendung
 
