@@ -60,7 +60,7 @@ func AddTable(doc PdfDoc, tableData TableData) {
 	doc.SetFontSize(12)
 	doc.SetFontStyle("bold")
 
-	initialHeight := 160
+	initialHeight := 125
 	rowHeight := 6
 
 	cursor := 20.0

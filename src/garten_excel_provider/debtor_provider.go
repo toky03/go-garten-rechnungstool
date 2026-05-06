@@ -13,9 +13,10 @@ import (
 )
 
 type gartenDebtorProviderImpl struct {
-	excelFile      *excelize.File
-	variableData   VariableData
-	invoiceDetails InvoiceDetails
+	memberExcelFile      *excelize.File
+	invoiceDataExcelFile *excelize.File
+	variableData         VariableData
+	invoiceDetails       InvoiceDetails
 }
 
 type debtorDataImpl struct {
@@ -27,33 +28,44 @@ type debtorDataImpl struct {
 	SavePath        string
 }
 
-func CreateExcelDebtorProvider(basePath, filePath string) *gartenDebtorProviderImpl {
-	excelFile, err := excelize.OpenFile(fmt.Sprintf("%s/%s", basePath, filePath))
+func CreateExcelDebtorProvider(
+	basePath, memberExcelFileName, invoiceDataExcelFileName string,
+) *gartenDebtorProviderImpl {
+	memberExcelFile, err := excelize.OpenFile(fmt.Sprintf("%s/%s", basePath, memberExcelFileName))
 	if err != nil {
 		log.Printf("could not read excel file %s", err)
 		return nil
 	}
 
-	variableData, err := ReadVariableData(excelFile)
+	invoiceDataExcelFile, err := excelize.OpenFile(
+		fmt.Sprintf("%s/%s", basePath, invoiceDataExcelFileName),
+	)
+	if err != nil {
+		log.Printf("could not read excel file %s", err)
+		return nil
+	}
+
+	variableData, err := ReadVariableData(invoiceDataExcelFile)
 	if err != nil {
 		log.Printf("could not read variable data %s", err)
 		return nil
 	}
-	invoiceDetails, err := ReadInvoiceDetails(excelFile)
+	invoiceDetails, err := ReadInvoiceDetails(invoiceDataExcelFile)
 	if err != nil {
 		log.Printf("could not read invoice details %s", err)
 		return nil
 	}
 
 	return &gartenDebtorProviderImpl{
-		excelFile:      excelFile,
-		variableData:   variableData,
-		invoiceDetails: invoiceDetails,
+		memberExcelFile:      memberExcelFile,
+		invoiceDataExcelFile: invoiceDataExcelFile,
+		variableData:         variableData,
+		invoiceDetails:       invoiceDetails,
 	}
 }
 
 func (p *gartenDebtorProviderImpl) All() iter.Seq[core.InvoiceDetailsProvider] {
-	paechter := ReadPaechterData(p.excelFile)
+	paechter := ReadPaechterData(p.memberExcelFile)
 
 	return func(yield func(core.InvoiceDetailsProvider) bool) {
 		for _, debtor := range paechter {
@@ -90,8 +102,11 @@ func (p *gartenDebtorProviderImpl) All() iter.Seq[core.InvoiceDetailsProvider] {
 }
 
 func (p *gartenDebtorProviderImpl) Close() {
-	if err := p.excelFile.Close(); err != nil {
-		log.Printf("could not close excel file %s", err)
+	if err := p.memberExcelFile.Close(); err != nil {
+		log.Printf("could not close member excel file %s", err)
+	}
+	if err := p.invoiceDataExcelFile.Close(); err != nil {
+		log.Printf("could not close invoice data excel file %s", err)
 	}
 }
 
