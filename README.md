@@ -6,6 +6,7 @@ Voraussetzung: Die Dateien im Ordner _data_ sind vorhanden.
 ### Standard (Garten Provider)
 ```bash
 cd src && go run .
+cd src && go run main.go
 ```
 
 ### Gönner Provider
@@ -47,6 +48,11 @@ Die folgende Tabelle Zeigt die Mindestandorderung an das Tabellenblatt _Mitglied
 |Parz.	        | Name | Vorname | Adresse | PLZ | Ort | Tel. | Aa | | |Spr. | Vorstand |
 |----------|------|---------|---------|--------|-----|------------|-----------|--- |---|-----------|----------|		
 |Parzellen nummer|Name als text|Vorname als Text|Strasse und Hausnummer|Postleitzahl|Ortschaftsnamen|Telefon (wird nicht benötigt)|Anzahl Aren als Zahlenwert|Leere Spalte|Leere Spalte|Sprache 'D' oder 'F' |'J' falls Mitglied Vorstansmitglied ist ansonsten leer|	
+
+#### _Gönner_ nur für Gönner Rechnungsstellung
+|Name | Vorname | Adresse | PLZ | Ort | Betrag |
+|---- | ---- | ---- | ---- | ---- | ---- |
+|Name als text|Vorname als Text|Strasse und Hausnummer|Postleitzahl|Ortschaftsnamen|Betrag als Zahl|
 
 #### Struktur im Excel **Rechnungsvariabeln.xslx**
 ##### _Betraege_
@@ -113,21 +119,25 @@ Damit wird zur Compile-Zeit genau ein Provider aktiv.
 
 #### 1. Standard (Garten Provider)
 Kein Build Tag nötig.
+`GOOS="windows" GOARCH="amd64" go build -o jahresrechnung_erstellen.exe`
 
 - Run: `cd src && go run .`
 - Build: `cd src && go build`
 
 #### 2. Gönner Provider
 Build Tag: `goenner`
+`GOOS="windows" GOARCH="amd64" go build -tags goenner -o goenner_jahresrechnung.exe`
 
 - Run: `cd src && go run -tags goenner .`
 - Build: `cd src && go build -tags goenner`
 
 #### 3. Individual Invoice Provider
 Build Tag: `individual_invoice_provider`
+`GOOS="windows" GOARCH="amd64" go build -tags individual_invoice_provider -o individual_rechnung.exe`
 
 - Run: `cd src && go run -tags individual_invoice_provider .`
 - Build: `cd src && go build -tags individual_invoice_provider`
+
 
 Hinweis:
 Die Build Tags `goenner` und `individual_invoice_provider` sollten nicht gemeinsam gesetzt werden, da sie unterschiedliche Provider-Implementierungen aktivieren.
