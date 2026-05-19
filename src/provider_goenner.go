@@ -1,22 +1,24 @@
-//go:build goenner
+//go:build goenner && !individual_invoice_provider
 
 package main
 
 import (
-	"log"
-
 	"github.com/toky03/qr-invoice/core"
 	goennerprovider "github.com/toky03/qr-invoice/goenner_provider"
 )
 
-func initializeDebtorProvider(basePath string) (core.DebtorProvider, func()) {
-	goennerDebtorProvider := goennerprovider.CreateGoennerDebtorProvider(
+func init() {
+	debtorProviderFactory = createGoennerDebtorProvider
+}
+
+func createGoennerDebtorProvider(basePath string) (core.DebtorProvider, func()) {
+	provider := goennerprovider.CreateGoennerDebtorProvider(
 		basePath,
 		"Mitgliederliste Aktuell.xlsx",
-		"Rechnugsvariabeln.xlsx",
+		"Rechnungsvariabeln.xlsx",
 	)
-	if goennerDebtorProvider == nil {
-		log.Panic("could not create goenner provider")
+	if provider == nil {
+		return nil, nil
 	}
-	return goennerDebtorProvider, goennerDebtorProvider.Close
+	return provider, provider.Close
 }

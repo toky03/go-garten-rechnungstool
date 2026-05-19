@@ -1,4 +1,30 @@
 # Garten Rechnungen erstellen
+
+## Quick Start
+Voraussetzung: Die Dateien im Ordner _data_ sind vorhanden.
+
+### Standard (Garten Provider)
+```bash
+cd src && go run .
+```
+
+### Gönner Provider
+```bash
+cd src && go run -tags goenner .
+```
+
+### Individual Invoice Provider
+```bash
+cd src && go run -tags individual_invoice_provider .
+```
+
+### Binaries bauen
+```bash
+cd src && go build
+cd src && go build -tags goenner
+cd src && go build -tags individual_invoice_provider
+```
+
 ## Vorbedingungen
 Golang installiert [Golang Installation](https://go.dev/doc/install)
 
@@ -65,8 +91,8 @@ Ab Zeile 7 werden wieder die Übersetzungen eingetragen. Hier handelt es sich um
 ## Anwendung
 
 ### Build für eine ausführbare Datei
-- build für das Gerät auf dem es Ausgeführt wird: `go build`
-- Für Windows `GOOS="windows" GOARCH="amd64" go build` 
+- build für das Gerät auf dem es Ausgeführt wird: `cd src && go build`
+- Für Windows `cd src && GOOS="windows" GOARCH="amd64" go build` 
 
 Die Ausführbare Datei wird hierdurch erstellt und heisst: "qr-invoice"
 Diese kann auf den jeweiligen Systemen (und im Ordner  der auch die Unterordner _data_ und _bills_ enthält) direkt ausgeführt werden.
@@ -74,8 +100,37 @@ Diese kann auf den jeweiligen Systemen (und im Ordner  der auch die Unterordner 
 ### Programm mit Go laufen lassen
 > Vorbedingung hierfür sind die benötigten Dateien im Ordner [Vorbedingungen](#einrichtung) _data_
 
-Programm zu starten `go run main.go`
+Programm zu starten `cd src && go run .`
 Nach erfolgreichem Lauf befinden sich die Rechnungen unter _bills_
+
+### Build Tags für unterschiedliche Provider
+Die Providerauswahl erfolgt über Build Tags in den Dateien:
+- `provider_garten.go` mit `//go:build !goenner && !individual_invoice_provider`
+- `provider_goenner.go` mit `//go:build goenner && !individual_invoice_provider`
+- `provider_individual_invoice.go` mit `//go:build individual_invoice_provider`
+
+Damit wird zur Compile-Zeit genau ein Provider aktiv.
+
+#### 1. Standard (Garten Provider)
+Kein Build Tag nötig.
+
+- Run: `cd src && go run .`
+- Build: `cd src && go build`
+
+#### 2. Gönner Provider
+Build Tag: `goenner`
+
+- Run: `cd src && go run -tags goenner .`
+- Build: `cd src && go build -tags goenner`
+
+#### 3. Individual Invoice Provider
+Build Tag: `individual_invoice_provider`
+
+- Run: `cd src && go run -tags individual_invoice_provider .`
+- Build: `cd src && go build -tags individual_invoice_provider`
+
+Hinweis:
+Die Build Tags `goenner` und `individual_invoice_provider` sollten nicht gemeinsam gesetzt werden, da sie unterschiedliche Provider-Implementierungen aktivieren.
 
 
 ## Development Note

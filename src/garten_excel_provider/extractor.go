@@ -106,6 +106,7 @@ func ReadVariableData(workbook *excelize.File) (VariableData, error) {
 	mitgliederbeitragText, err := extractTranslation(workbook, 6)
 	reparaturfondsText, err := extractTranslation(workbook, 7)
 	verwaltungskostenText, err := extractTranslation(workbook, 8)
+	unterhaltText, err := extractTranslation(workbook, 9)
 
 	pachtzins, err := extractCellValueAsFloat32(workbook, "A3")
 	wasserbezug, err := extractCellValueAsFloat32(workbook, "B3")
@@ -115,6 +116,7 @@ func ReadVariableData(workbook *excelize.File) (VariableData, error) {
 	mitgliederbeitrag, err := extractCellValueAsFloat32(workbook, "F3")
 	reparaturfonds, err := extractCellValueAsFloat32(workbook, "G3")
 	verwaltungskosten, err := extractCellValueAsFloat32(workbook, "H3")
+	unterhalt, err := extractCellValueAsFloat32(workbook, "I3")
 
 	if err != nil {
 		return VariableData{}, fmt.Errorf("could not read variable Data from Betraege %s", err)
@@ -129,6 +131,7 @@ func ReadVariableData(workbook *excelize.File) (VariableData, error) {
 		TextMitgliederbeitrag: mitgliederbeitragText,
 		TextReparaturFonds:    reparaturfondsText,
 		TextVerwaltungskosten: verwaltungskostenText,
+		TextUnterhalt:         unterhaltText,
 		Pachtzins:             pachtzins,
 		Wasserbezug:           wasserbezug,
 		GfAbonement:           gfAbonement,
@@ -137,6 +140,7 @@ func ReadVariableData(workbook *excelize.File) (VariableData, error) {
 		Mitgliederbeitrag:     mitgliederbeitrag,
 		Reparaturfonds:        reparaturfonds,
 		Verwaltungskosten:     verwaltungskosten,
+		Unterhalt:             unterhalt,
 	}, nil
 
 }

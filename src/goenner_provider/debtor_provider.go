@@ -155,7 +155,7 @@ func (p *GoennerProvider) createInvoice(debtor goennerDebtorData) swissqrinvoice
 func readGoennerDebtorData(workbook *excelize.File) []goennerDebtorData {
 	debtors := make([]goennerDebtorData, 0)
 
-	rows, err := workbook.GetRows("Gönner 2026")
+	rows, err := workbook.GetRows("Gönner")
 	if err != nil {
 		log.Printf("could not read Sheet %s", err)
 		return debtors

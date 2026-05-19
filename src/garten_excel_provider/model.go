@@ -20,6 +20,7 @@ type VariableData struct {
 	TextMitgliederbeitrag document.TranslatedText
 	TextReparaturFonds    document.TranslatedText
 	TextVerwaltungskosten document.TranslatedText
+	TextUnterhalt         document.TranslatedText
 
 	Pachtzins         float32
 	Wasserbezug       float32
@@ -29,6 +30,7 @@ type VariableData struct {
 	Mitgliederbeitrag float32
 	Reparaturfonds    float32
 	Verwaltungskosten float32
+	Unterhalt         float32
 }
 
 type InvoiceDetails struct {
@@ -53,6 +55,7 @@ type CalculatedData struct {
 	Mitgliederbeitrag float32
 	Reparaturfonds    float32
 	Verwaltungskosten float32
+	Unterhalt         float32
 	Total             float32
 	Are               float32
 }

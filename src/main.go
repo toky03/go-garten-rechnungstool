@@ -11,22 +11,32 @@ import (
 	"github.com/signintech/gopdf"
 	"github.com/toky03/qr-invoice/core"
 	"github.com/toky03/qr-invoice/document"
+	gartenexcelprovider "github.com/toky03/qr-invoice/garten_excel_provider"
 )
 
 var waitGroup sync.WaitGroup
+
+var debtorProviderFactory = createGartenDebtorProvider
 
 func main() {
 
 	godotenv.Load()
 
+	logFile, err := os.Create("logfile.txt")
+	if err != nil {
+		log.Panic("could not create log file")
+	}
+	defer logFile.Close()
+	log.SetOutput(logFile)
+
 	basePath := os.Getenv("BASE_PATH")
 	if basePath == "" {
-		basePath = "../data"
+		basePath = "data"
 	}
 
 	savePath := os.Getenv("SAVE_PATH")
 	if savePath == "" {
-		savePath = "../bills"
+		savePath = "bills"
 	}
 
 	debtorProvider, closeProvider := initializeDebtorProvider(basePath)
@@ -99,4 +109,24 @@ func createDocFromInvoice(invoice swissqrinvoice.Invoice) (doc document.PdfDoc) 
 		log.Panic(err)
 	}
 	return doc
+}
+
+func initializeDebtorProvider(basePath string) (core.DebtorProvider, func()) {
+	provider, closeFunc := debtorProviderFactory(basePath)
+	if provider == nil {
+		log.Panic("could not create debtor provider")
+	}
+	return provider, closeFunc
+}
+
+func createGartenDebtorProvider(basePath string) (core.DebtorProvider, func()) {
+	provider := gartenexcelprovider.CreateExcelDebtorProvider(
+		basePath,
+		"Mitgliederliste Aktuell.xlsx",
+		"Rechnungsvariabeln.xlsx",
+	)
+	if provider == nil {
+		return nil, nil
+	}
+	return provider, provider.Close
 }

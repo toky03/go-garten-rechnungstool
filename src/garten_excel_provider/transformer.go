@@ -25,8 +25,9 @@ func (v VariableData) ToCalculatedTableData(debtor PaechterData) CalculatedData 
 	}
 	reparaturfonds := v.Reparaturfonds
 	verwaltungskosten := v.Verwaltungskosten
+	unterhalt := v.Unterhalt
 
-	total := pachtzins + wasserbezug + gfAbonement + strom + versicherung + mitgliederbeitrag + reparaturfonds + verwaltungskosten
+	total := pachtzins + wasserbezug + gfAbonement + strom + versicherung + mitgliederbeitrag + reparaturfonds + verwaltungskosten + unterhalt
 
 	return CalculatedData{
 		Pachtzins:         roundHalf(pachtzins),
@@ -37,6 +38,7 @@ func (v VariableData) ToCalculatedTableData(debtor PaechterData) CalculatedData 
 		Mitgliederbeitrag: mitgliederbeitrag,
 		Reparaturfonds:    reparaturfonds,
 		Verwaltungskosten: verwaltungskosten,
+		Unterhalt:         unterhalt,
 		Are:               debtor.Are,
 		Total:             roundHalf(total),
 	}
@@ -144,7 +146,7 @@ func (invoiceDetails InvoiceDetails) ToTableData(
 			fmt.Sprintf(
 				"%.2f",
 				debtorData.Are,
-			), fmt.Sprintf("%.2f", debtorData.Are), "1", "1", "1", "1", "1", "1", "Total"},
+			), fmt.Sprintf("%.2f", debtorData.Are), "1", "1", "1", "1", "1", "1", "1", "Total"},
 	}
 
 	einheitColumn := document.TableColumn{
@@ -154,6 +156,7 @@ func (invoiceDetails InvoiceDetails) ToTableData(
 		Rows: []string{
 			tranlate(language, invoiceDetails.TabelleAaren),
 			tranlate(language, invoiceDetails.TabelleAaren),
+			tranlate(language, invoiceDetails.TabelleJahre),
 			tranlate(language, invoiceDetails.TabelleJahre),
 			tranlate(language, invoiceDetails.TabelleJahre),
 			tranlate(language, invoiceDetails.TabelleJahre),
@@ -174,7 +177,8 @@ func (invoiceDetails InvoiceDetails) ToTableData(
 			tranlate(language, variableData.TextVersicherung),
 			tranlate(language, variableData.TextMitgliederbeitrag),
 			tranlate(language, variableData.TextReparaturFonds),
-			tranlate(language, variableData.TextVerwaltungskosten), ""},
+			tranlate(language, variableData.TextVerwaltungskosten),
+			tranlate(language, variableData.TextUnterhalt), ""},
 	}
 
 	preisColumn := document.TableColumn{
@@ -189,7 +193,8 @@ func (invoiceDetails InvoiceDetails) ToTableData(
 			fmt.Sprintf("CHF %.2f", variableData.Versicherung),
 			fmt.Sprintf("CHF %.2f", variableData.Mitgliederbeitrag),
 			fmt.Sprintf("CHF %.2f", variableData.Reparaturfonds),
-			fmt.Sprintf("CHF %.2f", variableData.Verwaltungskosten), ""},
+			fmt.Sprintf("CHF %.2f", variableData.Verwaltungskosten),
+			fmt.Sprintf("CHF %.2f", variableData.Unterhalt), ""},
 	}
 
 	var mitgliederBeitrag string
@@ -213,6 +218,7 @@ func (invoiceDetails InvoiceDetails) ToTableData(
 			mitgliederBeitrag,
 			fmt.Sprintf("CHF %.2f", calculatedData.Reparaturfonds),
 			fmt.Sprintf("CHF %.2f", calculatedData.Verwaltungskosten),
+			fmt.Sprintf("CHF %.2f", calculatedData.Unterhalt),
 			fmt.Sprintf("CHF %.2f", calculatedData.Total),
 		},
 	}

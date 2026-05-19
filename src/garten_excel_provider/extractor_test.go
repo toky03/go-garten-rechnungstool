@@ -196,6 +196,7 @@ func TestReadVariableData(t *testing.T) {
 						"Mitgliederbeitrag",
 						"Reparaturfonds",
 						"Verwaltungskosten",
+						"Unterhalt",
 					},
 					{
 						"Fr pachtzins",
@@ -206,8 +207,9 @@ func TestReadVariableData(t *testing.T) {
 						"Fr Mitgliederbeitrag",
 						"Fr Reparaturfonds",
 						"Fr Verwaltungskosten",
+						"Fr Unterhalt",
 					},
-					{"10", "20", "5.5", "8", "9", "50", "11.9", "22"},
+					{"10", "20", "5.5", "8", "9", "50", "11.9", "22", "33"},
 				})},
 			want: VariableData{
 				TextPachtzins: document.TranslatedText{
@@ -242,6 +244,10 @@ func TestReadVariableData(t *testing.T) {
 					De: "Verwaltungskosten",
 					Fr: "Fr Verwaltungskosten",
 				},
+				TextUnterhalt: document.TranslatedText{
+					De: "Unterhalt",
+					Fr: "Fr Unterhalt",
+				},
 				Pachtzins:         10,
 				Wasserbezug:       20,
 				GfAbonement:       5.5,
@@ -250,6 +256,7 @@ func TestReadVariableData(t *testing.T) {
 				Mitgliederbeitrag: 50,
 				Reparaturfonds:    11.9,
 				Verwaltungskosten: 22,
+				Unterhalt:         33,
 			}},
 	}
 	for _, tt := range tests {

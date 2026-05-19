@@ -257,12 +257,12 @@ func TestAddTable(t *testing.T) {
 			},
 			MockPdf{
 				currentX:        30,
-				currentY:        148,
+				currentY:        143,
 				currentFontSize: 11,
 				currentStyle:    "default",
 				cells: map[float64]map[float64]Cell{
 					20: {
-						130: {
+						125: {
 							rect: gopdf.Rect{
 								W: 10,
 								H: 4.5,
@@ -273,7 +273,7 @@ func TestAddTable(t *testing.T) {
 							},
 							text: "Zeile 1",
 						},
-						136: {
+						131: {
 							rect: gopdf.Rect{
 								W: 10,
 								H: 4.5,
@@ -284,7 +284,7 @@ func TestAddTable(t *testing.T) {
 							},
 							text: "A",
 						},
-						142: {
+						137: {
 							rect: gopdf.Rect{
 								W: 10,
 								H: 4.5,
@@ -295,7 +295,7 @@ func TestAddTable(t *testing.T) {
 							},
 							text: "b",
 						},
-						148: {
+						143: {
 							rect: gopdf.Rect{
 								W: 10,
 								H: 4.5,
@@ -308,7 +308,7 @@ func TestAddTable(t *testing.T) {
 						},
 					},
 					30: {
-						130: {
+						125: {
 							rect: gopdf.Rect{
 								W: 30,
 								H: 4.5,
@@ -319,7 +319,7 @@ func TestAddTable(t *testing.T) {
 							},
 							text: "Zeile 2",
 						},
-						136: {
+						131: {
 							rect: gopdf.Rect{
 								W: 30,
 								H: 4.5,
@@ -330,7 +330,7 @@ func TestAddTable(t *testing.T) {
 							},
 							text: "X",
 						},
-						142: {
+						137: {
 							rect: gopdf.Rect{
 								W: 30,
 								H: 4.5,
@@ -341,7 +341,7 @@ func TestAddTable(t *testing.T) {
 							},
 							text: "y",
 						},
-						148: {
+						143: {
 							rect: gopdf.Rect{
 								W: 30,
 								H: 4.5,
